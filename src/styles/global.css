@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+	--font-space-grotesk: "Space Grotesk", sans-serif;
+}
+
+@layer components {
+	/*
+	 * Shared hover microinteractions.
+	 * Defined once here so cards, links, and CTAs animate the same way
+	 * everywhere they're used — landing page and case study pages alike.
+	 * All transitions: ease-out, <=200ms.
+	 */
+
+	/* Cards — Selected Works grid, More list items.
+	   Put `card-hover` on the clickable/hoverable wrapper, and `card-hover-surface`
+	   on the child that should pick up the elevation shadow (usually the image box). */
+	.card-hover {
+		transition: transform 200ms ease-out;
+	}
+	.card-hover:hover {
+		transform: scale(1.02);
+	}
+	.card-hover-surface {
+		transition: box-shadow 200ms ease-out;
+	}
+	.card-hover:hover .card-hover-surface {
+		box-shadow: 0 10px 24px -10px rgba(26, 26, 26, 0.35);
+	}
+
+	/* Text links — email, LinkedIn, GitHub, case study links.
+	   No static underline; it grows in on hover instead, alongside a color shift. */
+	.link-hover {
+		text-decoration: none;
+		background-image: linear-gradient(currentColor, currentColor);
+		background-repeat: no-repeat;
+		background-position: 0 100%;
+		background-size: 0% 1px;
+		transition:
+			color 200ms ease-out,
+			background-size 200ms ease-out;
+	}
+	.link-hover:hover {
+		color: #4a4a4a;
+		background-size: 100% 1px;
+	}
+
+	/* Buttons / CTAs. */
+	.cta-hover {
+		transition:
+			transform 200ms ease-out,
+			background-color 200ms ease-out,
+			border-color 200ms ease-out;
+	}
+	.cta-hover:hover {
+		transform: scale(1.03);
+	}
+}

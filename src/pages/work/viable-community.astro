@@ -1,0 +1,264 @@
+---
+import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
+import CaseStudySection from "../../components/CaseStudySection.astro";
+
+const meta = [
+	{ label: "Timeline", value: "Oct 2025 - Jun 2026" },
+	{ label: "Role", value: "Product Designer" },
+	{ label: "Tools", value: "Figma, Magic Patterns, Figma Make" },
+	{ label: "Deliverables", value: "UX research, Storefront Landing page" },
+];
+---
+
+<CaseStudyLayout
+	title="Viable Community"
+	heroSrc="/images/work/viable-community/hero.png"
+	heroAlt="Viable Marketplace storefront homepage"
+	meta={meta}
+>
+	<CaseStudySection eyebrow="Outcome" heading="From no brand to a trust-first product card">
+		<div class="flex flex-col gap-4 sm:flex-row">
+			<img
+				src="/images/work/viable-community/outcome-1.png"
+				alt="Viable Marketplace storefront with the redesigned product cards"
+				class="aspect-[630/479] w-full rounded-[4px] object-cover sm:w-[630px]"
+			/>
+			<img
+				src="/images/work/viable-community/outcome-2.png"
+				alt="Handmade soap product card showing ratings, sustainability score, and verified badge"
+				class="aspect-[323/479] w-full rounded-[4px] object-contain sm:w-[323px]"
+			/>
+		</div>
+		<p class="font-space-grotesk text-xs text-[#1a1a1a]">The final changes to the marketplace.</p>
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Research on 11 competitors and a validated persona became Viable's positioning statement,
+			the thing every downstream design decision got tested against. The product card redesign
+			that came out of it closed the trust gap directly: vague "eco-friendly" text claims became
+			scannable, glanceable proof sized to work in under a second of shopper attention.
+		</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Problem" heading="Building brand identity from scratch">
+		<img
+			src="/images/work/viable-community/problem.png"
+			alt="Research board covering competitor analysis and market positioning"
+			class="aspect-[907/479] w-full rounded-[4px] object-cover"
+		/>
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">No visual identity, no brand system.</strong> Viable Community had
+				a rough idea of who they were selling to, but nothing concrete to design from.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">No audience data to anchor decisions.</strong> The lack of a demographic
+				made it hard to know how to present their products.
+			</p>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="My Role" heading="Grounding the work in the market">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			I conducted research on 4 competitors and was in charge of persona construction in Phase 1,
+			I researched across four criteria: market and audience, sustainability and impact, business
+			and trust model, and product and market experience, including Ecomondo, Wallapop, and
+			Ethical Superstore. Then carried that foundation into Phase 2, translating findings into the
+			storefront landing page and product cards and defending those decisions in stakeholder
+			reviews.
+		</p>
+		<div class="flex flex-col gap-4 sm:flex-row">
+			<img
+				src="/images/work/viable-community/my-role-1.png"
+				alt="Viable Marketplace storefront homepage"
+				class="aspect-[630/479] w-full rounded-[4px] object-contain sm:w-[630px]"
+			/>
+			<img
+				src="/images/work/viable-community/my-role-2.png"
+				alt="Handmade soap product card showing ratings, sustainability score, and verified badge"
+				class="aspect-[323/479] w-full rounded-[4px] object-contain sm:w-[323px]"
+			/>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Product Decisions" heading="Phase 1: Research & Persona Construction">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			I conducted research on competitors and was in charge of persona construction in phase 1.
+			Then carried that foundation into phase 2, translating findings into the storefront landing
+			page and product cards, and defending those decisions in stakeholder reviews.
+		</p>
+		<div class="flex flex-col gap-2">
+			<img
+				src="/images/work/viable-community/phase1-research.png"
+				alt="Research criteria used to evaluate competitors"
+				class="aspect-[960/540] w-full rounded-[4px] object-cover"
+			/>
+			<img
+				src="/images/work/viable-community/phase1-competitors.png"
+				alt="Competitive analysis comparing Ecomondo, Wallapop, and Ethical Superstore"
+				class="aspect-[960/567] w-full rounded-[4px] object-cover"
+			/>
+		</div>
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			I researched across four criteria: market and audience, sustainability and impact, business
+			and trust model, product and market experience, against eleven competitors including
+			Ecomondo, Wallapop, and Ethical Superstore.
+		</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Product Decisions" heading="A positioning and a behavior to design around">
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				A positioning to build the brand voice around. Verified, affordable, community owned,
+				trust first. Every visual and content decision in the redesign had to reinforce that
+				Viable wasn't just another ethical marketplace, but one people could actually trust and
+				afford.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				A behavior to build the interface around. People were scanning and comparing, not
+				reading. That meant the storefront needed to work at a glance, not reward slow reading.
+			</p>
+		</div>
+		<img
+			src="/images/work/viable-community/positioning-statement.png"
+			alt="Product positioning statement summary"
+			class="aspect-[960/540] w-full rounded-[4px] object-cover"
+		/>
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			<strong class="font-bold">A real market gap.</strong> Sustainable platforms were fragmented by
+			category, sustainability itself was priced as a premium, impact claims were hard to trust
+			because of greenwashing, and no platform gave its community real ownership or a voice.
+		</p>
+		<img
+			src="/images/work/viable-community/market-gap-diagram.png"
+			alt="Diagram illustrating the market gap in sustainable marketplaces"
+			class="aspect-[960/540] w-full rounded-[4px] object-contain"
+		/>
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">A positioning to build the brand voice around.</strong> Verified, affordable,
+				community-owned, trust-first. Every visual and content decision in the redesign had to
+				reinforce that Viable wasn't just another ethical marketplace, but one people could
+				actually trust and afford.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">A behavior to build the interface around.</strong> People were scanning
+				and comparing, not reading. That meant the storefront needed to work at a glance, not reward
+				slow reading.
+			</p>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Phase 2 solution" heading="Card shape">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			The research pointed to a trust problem: vague "eco-friendly" claims with no evidence, read
+			by shoppers who scanned instead of reading.
+		</p>
+		<div class="flex flex-col gap-4 sm:flex-row">
+			<div class="flex flex-1 flex-col items-center gap-2">
+				<p class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">Before</p>
+				<img
+					src="/images/work/viable-community/card-before.png"
+					alt="Original product card design with description, certifications, and seller bio"
+					class="aspect-[514/479] w-full rounded-[4px] object-contain"
+				/>
+			</div>
+			<div class="flex flex-1 flex-col items-center gap-2">
+				<p class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">After</p>
+				<img
+					src="/images/work/viable-community/card-after.png"
+					alt="Redesigned product card with a star rating and sustainability score"
+					class="aspect-[419/479] w-full rounded-[4px] object-contain"
+				/>
+			</div>
+		</div>
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Tried:</strong> a card with a description, certifications, and a seller
+				bio for more information to prove trust.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Result:</strong> it read as more credible in isolation, but fell apart
+				in context. Next to nine other cards in a scroll, the extra text slowed the scan down.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Fix:</strong> cut to two signals readable in under a second and comparable
+				at card size, a star rating and a leaf based sustainability score.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Kept:</strong> seller attribution, but smaller, for provenance without
+				competing for attention.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Moved:</strong> everything else to the product detail page, where someone
+				who's already stopped scanning is willing to read. The card ended up deliberately smaller
+				than a "complete" listing, built for the fifteenth item in a scroll, not the first.
+			</p>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Product Decisions" heading="Smaller fixes that added up">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			The research pointed to a trust problem: vague "eco-friendly" claims with no evidence, read
+			by shoppers who scanned instead of reading.
+		</p>
+		<div class="flex flex-col items-center gap-2">
+			<p class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">Before</p>
+			<img
+				src="/images/work/viable-community/webfixes-before.png"
+				alt="Original storefront header with dual CTAs, no logo, and grey category pills"
+				class="aspect-[961/585] w-full rounded-[4px] object-contain"
+			/>
+		</div>
+		<div class="flex flex-col items-center gap-2">
+			<p class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">After</p>
+			<img
+				src="/images/work/viable-community/webfixes-after.png"
+				alt="Redesigned storefront header with a logo, single primary CTA, and free shipping utility bar"
+				class="aspect-[961/535] w-full rounded-[4px] object-cover"
+			/>
+		</div>
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				An audit of the existing storefront turned up smaller issues working against the trust
+				and glanceability goals, the things a shopper registers before they ever reach a product
+				card:
+			</p>
+			<ul class="list-disc pl-6">
+				<li class="font-space-grotesk text-base text-[#1a1a1a]">
+					<strong class="font-bold">Dual primary CTAs.</strong> "Sell an item" and "Log in / Sign in"
+					competed for attention with no hierarchy, so I demoted "Sell an item" to a secondary outline
+					style.
+				</li>
+				<li class="font-space-grotesk text-base text-[#1a1a1a]">
+					<strong class="font-bold">No logo.</strong> A header that already took up a disproportionate
+					share of the screen had no brand mark, so I added one.
+				</li>
+				<li class="font-space-grotesk text-base text-[#1a1a1a]">
+					<strong class="font-bold">No category pills.</strong> Every category sat in its own grey pill,
+					which read as clutter rather than navigation, so I flattened it into a simpler tab pattern.
+				</li>
+				<li class="font-space-grotesk text-base text-[#1a1a1a]">
+					<strong class="font-bold">No incentive signal.</strong> Nothing up top gave shoppers a reason
+					to trust the price, so I added a utility bar surfacing the free shipping threshold.
+				</li>
+			</ul>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Outcome" heading="What I learned">
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				I contributed the card redesign and the Phase 1 research behind it, then stepped back
+				from most of Phase 2 when the unpaid workload outpaced my bandwidth. I don't have full
+				visibility into the site's final production status beyond my own contributions, but the
+				work didn't need me in the room to stay correct. That's the real test of research: not
+				whether it holds up in the room where you defend it, but whether it still holds up in the
+				room you're not in.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				The lesson for next time is about scope, not craft. Push for a defined handoff before
+				bandwidth runs out, not after.
+			</p>
+		</div>
+		<div class="aspect-[960/479] w-full rounded-[4px] bg-[#4a4a4a]"></div>
+	</CaseStudySection>
+</CaseStudyLayout>

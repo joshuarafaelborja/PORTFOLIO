@@ -1,0 +1,23 @@
+---
+import Layout from "./Layout.astro";
+import CaseStudyHero from "../components/CaseStudyHero.astro";
+
+interface MetaItem {
+	label: string;
+	value: string;
+}
+
+interface Props {
+	title: string;
+	heroSrc: string;
+	heroAlt: string;
+	meta: MetaItem[];
+}
+
+const { title, heroSrc, heroAlt, meta } = Astro.props;
+---
+
+<Layout title={`${title} — JB`}>
+	<CaseStudyHero title={title} heroSrc={heroSrc} heroAlt={heroAlt} meta={meta} />
+	<slot />
+</Layout>

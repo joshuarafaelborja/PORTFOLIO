@@ -1,0 +1,25 @@
+---
+interface Item {
+	title: string;
+	year: string;
+}
+
+const items: Item[] = [
+	{ title: "FilMap", year: "2024" },
+	{ title: "Loop", year: "2025" },
+];
+---
+
+<section class="flex flex-col gap-3 border-b border-[#d4d2cc] pb-8">
+	<h2 class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">More works (under construction)</h2>
+	<div class="flex flex-wrap gap-8">
+		{
+			items.map((item) => (
+				<div class="card-hover flex w-full gap-16 sm:w-[284px]">
+					<p class="font-space-grotesk text-base text-[#1a1a1a]">{item.title}</p>
+					<p class="font-space-grotesk text-base text-[#1a1a1a]">{item.year}</p>
+				</div>
+			))
+		}
+	</div>
+</section>

@@ -1,0 +1,229 @@
+---
+import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
+import CaseStudySection from "../../components/CaseStudySection.astro";
+
+// Rebuilt from Figma "coach casestudy" frame (node 752:6382)
+// https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=752-6382
+// GIF sections use local files in public/images/work/coach/ (pulled from the
+// frame's animated fills, not Figma's static exports).
+
+const meta = [
+	{ label: "Timeline", value: "Aug 2024 - Present" },
+	{ label: "Role", value: "Lead Product Designer" },
+	{ label: "Tools", value: "Figma, Magic Patterns, Lovable, Claude API, Vercel" },
+];
+
+const gif = "shrink-0 w-[160px] sm:w-[200px]";
+const panel =
+	"flex w-full flex-wrap items-center justify-center gap-6 rounded-[4px] bg-[#1a1b1d] px-4 py-8";
+const caption = "max-w-full font-space-grotesk text-xs text-[#e8e7e3]";
+---
+
+<CaseStudyLayout
+	title="Coach"
+	heroSrc="/images/work/coach/hero.png"
+	heroAlt="Coach mobile app calculator screen"
+	meta={meta}
+>
+	<CaseStudySection eyebrow="Outcome" heading="From guesswork to a system beginners trust">
+		<div class={panel}>
+			<img src="/images/work/coach/firefox_97GKwV7RDQ.gif" alt="Coach empty dashboard on a phone" class={gif} />
+			<img src="/images/work/coach/firefox_cYtMVMMMOm.gif" alt="Coach warm-up calculator in Manual mode" class={gif} />
+			<img src="/images/work/coach/firefox_tyS3EknInC.gif" alt="Coach warm-up calculator in AI mode" class={gif} />
+		</div>
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Coach shipped with four core features: workout logging, a warm-up calculator, a progression
+			calculator, and account creation. It's live and functional at coachtest.vercel.app. The
+			bigger win is what it replaced: an AI-generated strategy card now explains the reasoning
+			behind every recommended weight, so beginners build training intuition instead of dependence
+			on the app.
+		</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Context" heading="Taking the guesswork out of getting stronger">
+		<img
+			src="/images/work/coach/context.png"
+			alt="Early Coach desktop dashboard build in Lovable"
+			class="aspect-[960/479] w-full rounded-[4px] object-cover"
+		/>
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			New lifters know they need to train progressively, but most apps either overwhelm them with
+			logging or give nothing beyond a timer. Coach started as a fast build in Lovable to test the
+			concept, and it worked well enough to prove the idea, but the early screens showed what
+			moving fast costs: dashboards packed with more data than a lifter needed mid-set, UI
+			elements crowded together with no breathing room, and a mobile view that barely held up on
+			an actual phone. That first pass validated the concept but made it clear the interface
+			needed a real design process behind it, not just more features.
+		</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Problem" heading="Existing apps track your lifts. None of them teach you how to lift.">
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">No direction for new lifters.</strong> Knowing what to log doesn't
+				help if you don't know how to train.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Warm-ups were an afterthought.</strong> The few tools that existed
+				felt outdated and disconnected from the rest of your workout.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Progress locked behind paywalls.</strong> Structured training was
+				out of reach for people just starting out.
+			</p>
+		</div>
+		<img
+			src="/images/work/coach/problem.png"
+			alt="Coach mobile screen showing the workout logging and calculator interface"
+			class="aspect-[960/479] w-full rounded-[4px] object-cover"
+		/>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Solution" heading="A calculator that thinks like a coach">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Coach replaces guesswork with a structured workflow: AI-calculated warm-up sets prepare your
+			nervous system before heavy lifts, double progression logic tells you exactly when to add
+			weight, and the whole system is designed around how beginners actually build strength, not
+			how advanced lifters track it.
+		</p>
+		<div class={panel}>
+			<img src="/images/work/coach/firefox_9nxtYEoi5B.gif" alt="Coach progression calculator in AI mode" class={gif} />
+			{/* TODO: two supporting stat-card crops (Coach's Strategy card + Ramp-Up row) — not available as clean Figma exports */}
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Design Decision" heading="The gym isn't a desk job">
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Tried:</strong> the first build was desktop-only, a clean dashboard-style
+				layout for logging sets and viewing progress.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Result:</strong> clean enough, but wrong context. Every user would
+				be standing at a squat rack holding their phone, not sitting at a desk.
+			</p>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				<strong class="font-bold">Fix:</strong> rebuilt mobile-first, so the core logging and calculator
+				flows work one-handed, standing up, mid-session.
+			</p>
+		</div>
+		<div class="flex w-full items-center justify-center rounded-[4px] bg-[#1a1b1d] px-4 py-8">
+			{/* TODO: design splits this into separate desktop (630w) + mobile (322w) crops with captions "The original desktop build for coach" / "Early Mobile design" */}
+			<img
+				src="/images/work/coach/desktop-to-mobile.png"
+				alt="Side-by-side comparison of the original desktop build and the early mobile redesign for Coach"
+				class="aspect-[960/508] w-full rounded-[4px] object-contain"
+			/>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Design Decision" heading="Warm-up sets calculated before you touch the bar">
+		<div class={panel}>
+			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
+				<img src="/images/work/coach/firefox_cYtMVMMMOm.gif" alt="Coach warm-up calculator in Manual mode" class={gif} />
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">Generates</strong> exact warm-up sets at 50%, 75%, and 85% of working
+					weight automatically, each stage building toward the working set.
+				</p>
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">Manual/AI</strong> toggle keeps both modes on one screen, so lifters
+					can switch without losing their inputs mid-session.
+				</p>
+			</div>
+			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
+				<img src="/images/work/coach/firefox_tyS3EknInC.gif" alt="Coach warm-up calculator in AI mode" class={gif} />
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">AI</strong> mode reads what actually happened in your last set, weight
+					and reps completed, and recommends increase, hold, or decrease.
+				</p>
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">Coach's</strong> Strategy card surfaces that reasoning inline, so beginners
+					build intuition over time instead of dependence on the app.
+				</p>
+			</div>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Design Decision" heading="Knowing your warm-up weight is only half the equation">
+		<div class={panel}>
+			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
+				<img src="/images/work/coach/firefox_Kk67Uo5ZW4.gif" alt="Coach progression calculator in Manual mode" class={gif} />
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">Most</strong> beginners track their lifts but have no framework for
+					knowing when to push heavier or when to pull back.
+				</p>
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">Progression</strong> uses the same pill-tab pattern as the warm-up
+					calculator, so switching between tools doesn't mean relearning the app.
+				</p>
+			</div>
+			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
+				<img src="/images/work/coach/firefox_9nxtYEoi5B.gif" alt="Coach progression calculator in AI mode" class={gif} />
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">A</strong> new lifter who hits 11 reps on an 8-rep target has no instinct
+					for what that means next week, logging data alone doesn't give direction.
+				</p>
+				<p class={`${caption} text-center`}>
+					<strong class="font-bold">AI</strong> mode translates weight, target reps, and reps completed
+					into a clear next working weight, with the reasoning shown inline.
+				</p>
+			</div>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="What's next" heading="Building the social layer">
+		<div class={panel}>
+			<img src="/images/work/coach/firefox_97GKwV7RDQ.gif" alt="Coach account-sync prompt on a phone" class={gif} />
+			{/* TODO: supporting "Create Account" modal crop (442w) — not available as a clean Figma export */}
+		</div>
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Losing months of logged progress because you switched phones or cleared your browser would
+			kill the habit entirely. Account creation syncs workout history to a database so users never
+			start from zero. A friends layer builds on top of that, adding social accountability as a
+			second reason to stay consistent.
+		</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="What's next" heading="Medals borrowed from competitive games">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Weight progression is slow, a beginner might train for weeks before their numbers move
+			meaningfully, which is exactly when most people quit. Medals add a second progression track
+			that rewards consistency over performance, so users feel advancement even when the plates
+			aren't moving. Borrowed from ranked systems in competitive games, where visible milestones
+			keep players returning regardless of skill level.
+		</p>
+		<div class={panel}>
+			<img src="/images/work/coach/firefox_fbijwWf5SN.gif" alt="Coach achievements and medals screen" class="shrink-0 w-[200px] sm:w-[240px]" />
+			{/* TODO: supporting zoomed medal-card crop (454w) — not available as a clean Figma export */}
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Outcome" heading="What shipped">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Coach shipped with four core features: workout logging, warm-up calculator, progression
+			calculator, and account creation. The database is currently inactive, but the app is live
+			and functional at coachtest.vercel.app.
+		</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Outcome" heading="Try it live">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Coach is live and functional. Try the warm-up and progression calculators yourself, right
+			here.
+		</p>
+		<div class="flex justify-center overflow-x-auto py-2">
+			<iframe
+				src="https://coachtest.vercel.app"
+				style="width: 390px; height: 844px; border-radius: 24px; border: none;"
+				title="Coach live app"></iframe>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Outcome" heading="Looking back">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			I'd define the core feature set before writing a line of code. Design decisions that came
+			from mid-build user feedback led to better features, but also extended the timeline. The
+			lesson: validate the feature list early, then build with constraints.
+		</p>
+	</CaseStudySection>
+</CaseStudyLayout>
