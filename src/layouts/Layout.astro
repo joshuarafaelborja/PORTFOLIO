@@ -5,15 +5,15 @@ interface Props {
 	title?: string;
 }
 
-const { title = "Astro" } = Astro.props;
+const { title = "Josh Borja — Product Designer" } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+		<link rel="icon" href="/favicon.ico?v=2" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,14 +27,51 @@ const { title = "Astro" } = Astro.props;
 	<body>
 		<main class="flex justify-center bg-[#e8e7e3] px-6 pt-[29px] pb-[25px] sm:px-10 lg:px-[96px]">
 			<div class="flex w-full max-w-[960px] flex-col gap-8">
-				<a
-					href="/"
-					class="link-hover w-fit font-serif text-4xl font-bold leading-normal text-[#4a4a4a] hover:text-[#1a1a1a]"
-				>
-					JB
-				</a>
+				<nav class="flex h-16 items-center justify-between border-b border-[#d4d2cc]">
+					<a
+						href="/"
+						class="link-hover w-fit font-serif text-4xl font-bold leading-normal text-[#4a4a4a] hover:text-[#1a1a1a]"
+					>
+						JB
+					</a>
+					<div class="flex items-center gap-8 font-space-grotesk text-base font-bold text-[#1a1a1a]">
+						<a href="/" class="link-hover">WORKS</a>
+						<a href="/information" class="link-hover">INFORMATION</a>
+					</div>
+				</nav>
 				<slot />
+				<script>
+					const DEFAULT_TITLE = "PRODUCT DESIGNER";
+					const AWAY_TITLE = "still here.";
+
+					const DEFAULT_FAVICON = "/favicon-green.svg?v=2";
+					const AWAY_FAVICON = "/favicon-away.svg?v=2";
+
+					function setFavicon(href) {
+						let link = document.querySelector("link[rel~='icon']");
+						if (!link) {
+							link = document.createElement("link");
+							link.rel = "icon";
+							document.head.appendChild(link);
+						}
+						link.href = href;
+					}
+
+					function applyState() {
+						if (document.hidden) {
+							document.title = AWAY_TITLE;
+							setFavicon(AWAY_FAVICON);
+						} else {
+							document.title = DEFAULT_TITLE;
+							setFavicon(DEFAULT_FAVICON);
+						}
+					}
+
+					document.addEventListener("visibilitychange", applyState);
+					applyState();
+				</script>
 			</div>
 		</main>
 	</body>
 </html>
+

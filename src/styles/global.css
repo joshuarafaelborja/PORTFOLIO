@@ -14,17 +14,15 @@
 
 	/* Cards — Selected Works grid, More list items.
 	   Put `card-hover` on the clickable/hoverable wrapper, and `card-hover-surface`
-	   on the child that should pick up the elevation shadow (usually the image box). */
-	.card-hover {
-		transition: transform 200ms ease-out;
-	}
-	.card-hover:hover {
-		transform: scale(1.02);
-	}
+	   on the child that should lift and pick up the elevation shadow (usually the
+	   image box) — surrounding text stays put. */
 	.card-hover-surface {
-		transition: box-shadow 200ms ease-out;
+		transition:
+			transform 200ms ease-out,
+			box-shadow 200ms ease-out;
 	}
 	.card-hover:hover .card-hover-surface {
+		transform: translateY(-4px);
 		box-shadow: 0 10px 24px -10px rgba(26, 26, 26, 0.35);
 	}
 
