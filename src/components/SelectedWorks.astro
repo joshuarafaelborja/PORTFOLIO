@@ -1,50 +1,53 @@
 ---
 interface Work {
 	title: string;
-	subtitle: string;
+	tagline: string;
 	img: string;
 	imgAlt: string;
-	href?: string;
+	years: string;
+	href: string;
 }
 
 const works: Work[] = [
 	{
-		title: "Viable Community",
-		subtitle: "Market Place 2025-26",
-		img: "/images/work/viable-community/thumbnail.png",
-		imgAlt: "Viable Marketplace storefront homepage",
-		href: "/work/viable-community",
+		title: "Eduseek.AI",
+		tagline: "PRODUCT DESIGN / AI UX / EDTECH",
+		img: "/images/work/eduseek/hero-2x.png",
+		imgAlt: "Eduseek.AI session replay dashboard",
+		years: "2025 - 2026",
+		href: "/work/eduseek",
 	},
 	{
 		title: "Coach",
-		subtitle: "Fitness AI 2024-26",
-		img: "/images/work/coach/thumbnail.png",
-		imgAlt: "Coach warm-up and progression calculator screens",
+		tagline: "PRODUCT DESIGN / AI/ML / BUILDER",
+		img: "/images/work/coach/hero-2x.png",
+		imgAlt: "Coach mobile app calculator screen",
+		years: "2024 - 2026",
 		href: "/work/coach",
 	},
 	{
-		title: "Eduseek.AI",
-		subtitle: "Edtech 2025-26",
-		img: "/images/work/eduseek/thumbnail.png",
-		imgAlt: "Eduseek.AI session replay dashboard",
-		href: "/work/eduseek",
+		title: "Viable Community",
+		tagline: "PRODUCT DESIGN / UX RESEARCH / E-COMMERCE",
+		img: "/images/work/viable-community/hero-2x.png",
+		imgAlt: "Viable Marketplace storefront homepage",
+		years: "2025 - 2026",
+		href: "/work/viable-community",
 	},
 ];
 ---
 
 <section class="flex flex-col gap-4 border-b border-[#d4d2cc] pb-8">
 	<h2 class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">Selected Works</h2>
-	<div class="flex w-full max-w-[916px] flex-wrap gap-8">
-		{
-			works.map((work) => (
-				<a href={work.href ?? "#"} class="card-hover flex w-full flex-col gap-3 sm:w-[284px]">
-					<div class="card-hover-surface aspect-[284/264] w-full overflow-hidden rounded-2xl bg-[#1a1a1a]">
-						<img src={work.img} alt={work.imgAlt} class="h-full w-full object-cover" />
-					</div>
-					<p class="font-space-grotesk text-base text-[#1a1a1a]">{work.title}</p>
-					<p class="font-space-grotesk text-xs text-[#1a1a1a]">{work.subtitle}</p>
-				</a>
-			))
-		}
-	</div>
+	{
+		works.map((work) => (
+			<a href={work.href} class="card-hover flex w-full flex-col gap-3">
+				<p class="font-space-grotesk text-base font-bold text-[#1a1a1a]">{work.title}</p>
+				<p class="font-space-grotesk text-xs text-[#1a1a1a]">{work.tagline}</p>
+				<div class="card-hover-surface aspect-[960/540] w-full overflow-hidden bg-[#1a1a1a]">
+					<img src={work.img} alt={work.imgAlt} class="h-full w-full object-cover" loading="lazy" />
+				</div>
+				<p class="font-space-grotesk text-xs text-[#1a1a1a]">{work.years}</p>
+			</a>
+		))
+	}
 </section>

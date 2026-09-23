@@ -1,0 +1,142 @@
+---
+interface WorkItem {
+	title: string;
+	subtitle: string;
+	img: string;
+	imgAlt: string;
+	href: string;
+}
+
+interface Row {
+	year: string;
+	label: string;
+	items?: WorkItem[];
+}
+
+const recentWorks: WorkItem[] = [
+	{
+		title: "Eduseek.AI",
+		subtitle: "Edtech 2025-2026",
+		img: "/images/work/eduseek/hero.png",
+		imgAlt: "Eduseek.AI session replay dashboard",
+		href: "/work/eduseek",
+	},
+	{
+		title: "Coach",
+		subtitle: "AI Independent Project 2024-2026",
+		img: "/images/work/coach/hero.png",
+		imgAlt: "Coach mobile app calculator screen",
+		href: "/work/coach",
+	},
+	{
+		title: "Viable",
+		subtitle: "Storefront landing page 2025-2026",
+		img: "/images/work/viable-community/hero.png",
+		imgAlt: "Viable Marketplace storefront homepage",
+		href: "/work/viable-community",
+	},
+];
+
+const rows: Row[] = [
+	{ year: "2026", label: "RECENT", items: recentWorks },
+	{ year: "2025", label: "OLD" },
+	{ year: "2024", label: "OLDER" },
+];
+---
+
+<div class="flex flex-col gap-8">
+	{
+		rows.map((row) => (
+			<div class="works-row border-b border-[#d4d2cc] pb-8">
+				<button
+					type="button"
+					class="works-row-toggle w-full cursor-pointer text-left font-space-grotesk text-[32px] leading-none text-[#1a1a1a] sm:text-[48px]"
+					aria-expanded="false"
+				>
+					<span class="works-row-collapsed items-baseline gap-2">
+						<span class="font-normal">{row.year}</span>
+						<span class="font-bold">
+							&gt; {row.label}
+						</span>
+					</span>
+					<span class="works-row-expanded items-baseline justify-between">
+						<span class="font-normal">{row.year}</span>
+						<span class="font-bold">
+							{row.label} &lt;
+						</span>
+					</span>
+				</button>
+				<div class="works-row-panel">
+					<div class="works-row-panel-inner">
+						<div class="pt-8">
+							{row.items ? (
+								<div class="flex flex-wrap gap-8">
+									{row.items.map((item) => (
+										<a href={item.href} class="card-hover flex w-full flex-col gap-3 sm:w-[284px]">
+											<div class="card-hover-surface aspect-[284/264] w-full overflow-hidden rounded-[16px] bg-[#1a1a1a] sm:h-[264px] sm:w-[284px]">
+												<img
+													src={item.img}
+													alt={item.imgAlt}
+													class="h-full w-full object-cover"
+													loading="lazy"
+												/>
+											</div>
+											<p class="font-space-grotesk text-base text-[#1a1a1a]">{item.title}</p>
+											<p class="font-space-grotesk text-xs text-[#1a1a1a]">{item.subtitle}</p>
+										</a>
+									))}
+								</div>
+							) : (
+								<p class="font-space-grotesk text-base text-[#1a1a1a]">(under construction)</p>
+							)}
+						</div>
+					</div>
+				</div>
+			</div>
+		))
+	}
+</div>
+
+<script>
+	// Pending "snap to auto" listeners, keyed by panel, so a close mid-open
+	// (or vice versa) cancels the previous transitionend instead of stacking.
+	const openHandlers = new WeakMap<HTMLElement, (e: TransitionEvent) => void>();
+
+	function setPanelOpen(panel: HTMLElement, open: boolean) {
+		const pending = openHandlers.get(panel);
+		if (pending) {
+			panel.removeEventListener("transitionend", pending);
+			openHandlers.delete(panel);
+		}
+
+		if (open) {
+			panel.style.height = `${panel.scrollHeight}px`;
+			const onEnd = (e: TransitionEvent) => {
+				if (e.propertyName !== "height") return;
+				panel.style.height = "auto";
+				panel.removeEventListener("transitionend", onEnd);
+				openHandlers.delete(panel);
+			};
+			openHandlers.set(panel, onEnd);
+			panel.addEventListener("transitionend", onEnd);
+		} else {
+			panel.style.height = `${panel.scrollHeight}px`;
+			panel.offsetHeight; // force reflow so the browser commits the px height before animating to 0
+			requestAnimationFrame(() => {
+				panel.style.height = "0px";
+			});
+		}
+	}
+
+	document.querySelectorAll<HTMLButtonElement>(".works-row-toggle").forEach((button) => {
+		button.addEventListener("click", () => {
+			const row = button.closest<HTMLElement>(".works-row");
+			const panel = row?.querySelector<HTMLElement>(".works-row-panel");
+			if (!row || !panel) return;
+			const willOpen = !row.classList.contains("is-open");
+			row.classList.toggle("is-open", willOpen);
+			button.setAttribute("aria-expanded", String(willOpen));
+			setPanelOpen(panel, willOpen);
+		});
+	});
+</script>

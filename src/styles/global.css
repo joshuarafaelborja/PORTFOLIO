@@ -53,4 +53,32 @@
 	.cta-hover:hover {
 		transform: scale(1.03);
 	}
+
+	/* Works page expand/collapse rows.
+	   .works-row-collapsed / .works-row-expanded swap which label+chevron
+	   layout is shown, driven by the row's .is-open class (toggled in
+	   WorksList.astro). .works-row-panel slides open/closed separately —
+	   see the height transition below. */
+	.works-row-collapsed {
+		display: inline-flex;
+	}
+	.works-row-expanded {
+		display: none;
+		width: 100%;
+	}
+	.works-row.is-open .works-row-expanded {
+		display: flex;
+	}
+	.works-row.is-open .works-row-collapsed {
+		display: none;
+	}
+
+	/* Height is driven by JS (measured scrollHeight, see WorksList.astro) rather
+	   than a grid-template-rows 0fr/1fr trick — Safari doesn't reliably animate
+	   `fr` units, which made this snap open/closed instead of sliding there. */
+	.works-row-panel {
+		height: 0;
+		overflow: hidden;
+		transition: height 250ms ease-out;
+	}
 }
