@@ -25,18 +25,19 @@ const { title = "Josh Borja — Product Designer" } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<main class="flex min-h-screen justify-center bg-[#e8e7e3] px-6 pt-[29px] pb-[25px] sm:px-10 lg:px-[96px]">
+		<main class="flex min-h-screen justify-center bg-[#fbf9ef] px-6 pt-[29px] pb-[25px] sm:px-10 lg:px-[96px]">
 			<div class="flex w-full max-w-[960px] flex-col gap-8">
 				<nav class="flex h-16 items-center justify-between border-b border-[#d4d2cc]">
 					<a
 						href="/"
-						class="link-hover w-fit font-serif text-4xl font-bold leading-normal text-[#4a4a4a] hover:text-[#1a1a1a]"
+						class="link-hover w-fit font-serif text-4xl font-bold leading-normal text-[#1b5299] hover:text-[#133d73]"
 					>
 						JB
 					</a>
 					<div class="flex items-center gap-8 font-space-grotesk text-base font-bold text-[#1a1a1a]">
-						<a href="/works" class="link-hover">WORKS</a>
-						<a href="/information" class="link-hover">INFORMATION</a>
+						{/* Hidden until there are more than 3 case studies and the /works archive earns a nav slot. */}
+						{/* <a href="/works" class="link-hover">WORKS</a> */}
+						<a href="/information" class="link-hover">ABOUT ME</a>
 					</div>
 				</nav>
 				<slot />
