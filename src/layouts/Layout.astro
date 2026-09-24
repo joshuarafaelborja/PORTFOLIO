@@ -12,8 +12,8 @@ const { title = "Josh Borja — Product Designer" } = Astro.props;
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
-		<link rel="icon" href="/favicon.ico?v=2" />
+		<link rel="icon" href="/favicon.ico?v=3" sizes="32x32" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -44,17 +44,24 @@ const { title = "Josh Borja — Product Designer" } = Astro.props;
 					const DEFAULT_TITLE = "PRODUCT DESIGNER";
 					const AWAY_TITLE = "still here.";
 
-					const DEFAULT_FAVICON = "/favicon-green.svg?v=2";
-					const AWAY_FAVICON = "/favicon-away.svg?v=2";
+					const DEFAULT_FAVICON = "/favicon-green.svg?v=3";
+					const AWAY_FAVICON = "/favicon-away.svg?v=3";
 
 					function setFavicon(href) {
-						let link = document.querySelector("link[rel~='icon']");
-						if (!link) {
-							link = document.createElement("link");
+						const links = document.querySelectorAll("link[rel~='icon']");
+						if (links.length === 0) {
+							const link = document.createElement("link");
 							link.rel = "icon";
 							document.head.appendChild(link);
+							link.href = href;
+							return;
 						}
-						link.href = href;
+						// Update every icon link so Chrome can't fall back to a stale one
+						links.forEach((link) => {
+							link.type = "image/svg+xml";
+							link.removeAttribute("sizes");
+							link.href = href;
+						});
 					}
 
 					function applyState() {
