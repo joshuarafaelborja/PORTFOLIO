@@ -46,14 +46,14 @@
 	/* Inline text links — email, LinkedIn, resume, GitHub.
 	   Blue with a static underline so they read as clickable; darkens on hover. */
 	.text-link {
-		color: #1b5299;
+		color: #0052cc;
 		text-decoration: underline;
 		text-decoration-skip-ink: none;
 		text-underline-position: from-font;
 		transition: color 200ms ease-out;
 	}
 	.text-link:hover {
-		color: #133d73;
+		color: #003d99;
 	}
 
 	/* Buttons / CTAs. */

@@ -1,0 +1,185 @@
+---
+// Interactive Solutions switcher for the EduSeek case study.
+// Built from Figma "active nav menus" (node 867:438) and "nav button" variants (node 861:285)
+// https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=867-438
+// State is local to the component: clicking a nav button marks it active and swaps
+// the right-hand panel. The first solution is active on load.
+// The container height stays fixed to the tallest panel across all three states.
+
+interface Solution {
+	id: string;
+	label: string;
+	tag: string;
+	heading: string;
+	body: string;
+	stat: string;
+	statLabel: string;
+}
+
+const solutions: Solution[] = [
+	{
+		id: "navigation",
+		label: "Navigation",
+		tag: "Solution 01",
+		heading: "From an 8-click bottleneck to a 3-click habit",
+		body: "From 8 clicks to 3, with navigation that stays put. A Year / Month / Week toggle replaced the single-scroll week list, so any session is reachable in 2-3 clicks and navigation holds its position instead of resetting.",
+		stat: "8 to 3",
+		statLabel: "clicks needed to navigate",
+	},
+	{
+		id: "key-insights",
+		label: "Key Insights",
+		tag: "Solution 02",
+		heading: "Surfacing the story behind the score",
+		body: "An auto-summarized Key Insights feature pairs color-coded progress meters with the critical learning moment from each conversation, at no added AI generation cost.",
+		stat: "$0",
+		statLabel: "added generation cost",
+	},
+	{
+		id: "mobile",
+		label: "Mobile",
+		tag: "Solution 03",
+		heading: "Extending access beyond the classroom",
+		body: "The mobile experience was rebuilt to match the desktop redesign, so teachers get full session replay functionality on phones and tablets, not a trimmed-down view.",
+		stat: "17",
+		statLabel: "schools using it",
+	},
+];
+---
+
+<div
+	class="solutions-tabs flex w-full flex-col gap-4 border-b border-[#d4d2cc] p-4 pb-8 sm:flex-row sm:items-start sm:p-5 sm:pb-8"
+	data-solutions-tabs
+>
+	<div
+		role="tablist"
+		aria-label="Solutions"
+		aria-orientation="vertical"
+		class="flex w-full shrink-0 flex-col gap-3 sm:w-[180px] sm:pt-[39px]"
+	>
+		{
+			solutions.map((s, i) => (
+				<button
+					type="button"
+					role="tab"
+					id={`solution-tab-${s.id}`}
+					aria-controls={`solution-panel-${s.id}`}
+					aria-selected={i === 0 ? "true" : "false"}
+					tabindex={i === 0 ? 0 : -1}
+					class="solution-tab flex w-full cursor-pointer items-center justify-between rounded-[12px] px-[14px] py-[10px] text-left font-space-grotesk text-base"
+				>
+					<span>{s.label}</span>
+					<span class="solution-caret relative size-4 shrink-0" aria-hidden="true">
+						<img src="/images/work/eduseek/icons/caret-right-inactive.svg" alt="" width="16" height="16" class="caret-inactive absolute inset-0" />
+						<img src="/images/work/eduseek/icons/caret-right-active.svg" alt="" width="16" height="16" class="caret-active absolute inset-0" />
+					</span>
+				</button>
+			))
+		}
+	</div>
+
+	<div class="grid min-w-0 flex-1">
+	{
+		solutions.map((s, i) => (
+			<div
+				role="tabpanel"
+				id={`solution-panel-${s.id}`}
+				aria-labelledby={`solution-tab-${s.id}`}
+				data-active={i === 0 ? "true" : "false"}
+				class="solution-panel col-start-1 row-start-1 flex min-w-0 flex-col items-start gap-4"
+			>
+				<span class="rounded-[12px] bg-[#0052cc] px-[14px] py-1 font-space-grotesk text-base font-bold text-[#f3f1f1]">
+					{s.tag}
+				</span>
+				<h3 class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">{s.heading}</h3>
+				<p class="font-space-grotesk text-base text-[#1a1a1a]">{s.body}</p>
+				<div class="flex flex-col gap-1">
+					<p class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">{s.stat}</p>
+					<p class="font-space-grotesk text-base text-[#1a1a1a]">{s.statLabel}</p>
+				</div>
+			</div>
+		))
+	}
+	</div>
+</div>
+
+<style>
+	/* Nav button variants from Figma node 861:285: Active / hover / Inactive. */
+	.solution-tab {
+		background-color: #f3f1f1;
+		color: #1a1a1a;
+		transition:
+			background-color 200ms ease-out,
+			color 200ms ease-out;
+	}
+	.solution-tab:hover {
+		background-color: #99c2ff;
+		color: #f3f1f1;
+	}
+	.solution-tab[aria-selected="true"] {
+		background-color: #0052cc;
+		color: #f3f1f1;
+		font-weight: 700;
+	}
+	.solution-tab:focus-visible {
+		outline: 2px solid #0052cc;
+		outline-offset: 2px;
+	}
+
+	.caret-inactive {
+		opacity: 0.6;
+	}
+	.caret-active {
+		opacity: 0;
+	}
+	.solution-tab:hover .caret-inactive,
+	.solution-tab[aria-selected="true"] .caret-inactive {
+		opacity: 0;
+	}
+	.solution-tab:hover .caret-active,
+	.solution-tab[aria-selected="true"] .caret-active {
+		opacity: 1;
+	}
+
+	/* All panels share one grid cell, so the box is always as tall as the longest
+	   (Navigation) and doesn't resize when switching. Inactive panels keep their
+	   space but are invisible and hidden from assistive tech. */
+	.solution-panel[data-active="false"] {
+		visibility: hidden;
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-solutions-tabs]").forEach((root) => {
+		const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+		const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+		const select = (index: number, focus = false) => {
+			tabs.forEach((tab, i) => {
+				const active = i === index;
+				tab.setAttribute("aria-selected", String(active));
+				tab.tabIndex = active ? 0 : -1;
+				panels[i].dataset.active = String(active);
+			});
+			if (focus) tabs[index].focus();
+		};
+
+		tabs.forEach((tab, i) => {
+			tab.addEventListener("click", () => select(i));
+			tab.addEventListener("keydown", (e) => {
+				const keys: Record<string, number> = {
+					ArrowDown: (i + 1) % tabs.length,
+					ArrowRight: (i + 1) % tabs.length,
+					ArrowUp: (i - 1 + tabs.length) % tabs.length,
+					ArrowLeft: (i - 1 + tabs.length) % tabs.length,
+					Home: 0,
+					End: tabs.length - 1,
+				};
+				if (e.key in keys) {
+					e.preventDefault();
+					select(keys[e.key], true);
+				}
+			});
+		});
+	});
+</script>

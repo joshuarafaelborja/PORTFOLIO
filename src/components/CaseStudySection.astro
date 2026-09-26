@@ -2,12 +2,14 @@
 interface Props {
 	eyebrow: string;
 	heading: string;
+	/** Set false to drop the bottom divider, e.g. when the last child draws its own border. */
+	divider?: boolean;
 }
 
-const { eyebrow, heading } = Astro.props;
+const { eyebrow, heading, divider = true } = Astro.props;
 ---
 
-<section class="flex flex-col gap-4 border-b border-[#d4d2cc] pb-8">
+<section class:list={["flex flex-col gap-4", divider && "border-b border-[#d4d2cc] pb-8"]}>
 	<div class="flex flex-col gap-1 border-b border-[#d4d2cc] pb-2">
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">{eyebrow}</p>
 		<h2 class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">{heading}</h2>

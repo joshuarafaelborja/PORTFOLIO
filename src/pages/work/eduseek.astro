@@ -1,6 +1,7 @@
 ---
 import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
 import CaseStudySection from "../../components/CaseStudySection.astro";
+import SolutionsTabs from "../../components/SolutionsTabs.astro";
 
 // Rebuilt from Figma "eduseek casestudy" frame (node 750:6173)
 // https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=750-6173
@@ -25,7 +26,7 @@ const caption = "max-w-[480px] text-center font-space-grotesk text-base text-[#e
 	heroAlt="Eduseek.AI session replay dashboard"
 	meta={meta}
 >
-	<CaseStudySection eyebrow="Outcome" heading="From an 8-click bottleneck to a 3-click habit">
+	<CaseStudySection eyebrow="Outcome" heading="From an 8-click bottleneck to a 3-click habit" divider={false}>
 		<div class={panel}>
 			<img
 				src="/images/work/eduseek/Figma_7ake3cWfCV.gif"
@@ -38,15 +39,7 @@ const caption = "max-w-[480px] text-center font-space-grotesk text-base text-[#e
 				class="w-full max-w-[326px] rounded-[4px]"
 			/>
 		</div>
-		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Sixteen weeks of working directly with the CEO turned a UI refresh request into a full
-			diagnostic of how teachers actually use the product. Testing confirmed calendar navigation
-			dropped from 8 clicks to 3. The Key Insights feature I designed shipped as the solution the
-			CEO specifically flagged for surfacing actionable data at no added AI generation cost. The
-			mobile rebuild took a session replay experience from unusable to fully functional on phones
-			and tablets. What started as a UI refresh became the redesign that reshaped how 17 schools
-			review student progress.
-		</p>
+		<SolutionsTabs />
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow="Context" heading="The platform">
@@ -97,88 +90,6 @@ const caption = "max-w-[480px] text-center font-space-grotesk text-base text-[#e
 				<p class={caption}>
 					A mastery score told teachers nothing about where a student actually struggled.
 					Teachers were staring at numbers with no context to act on.
-				</p>
-			</div>
-		</div>
-	</CaseStudySection>
-
-	<CaseStudySection eyebrow="Design Decisions" heading="From 8 clicks to 3, with navigation that stays put">
-		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			I tried keeping the existing single-scroll week list and just restyling it, since that was
-			the original ask. But testing showed the design still had teachers clicking 8+ times, and
-			the jump-to-end-of-week behavior meant one wrong click cost a full re-navigation.
-		</p>
-		<div class="flex w-full flex-col items-center gap-8 rounded-[4px] bg-[#1e1e1e] px-4 py-8">
-			<div class="flex flex-col items-center gap-2">
-				<img
-					src="/images/work/eduseek/Figma_7ake3cWfCV.gif"
-					alt="Year, Month, and Week toggle navigation next to the restyled calendar"
-					class="w-full max-w-[353px] rounded-[4px]"
-				/>
-				<p class={caption}>
-					Fix: built a Year / Month / Week toggle so any session was reachable in 2-3 clicks, with
-					navigation that holds its position instead of resetting.
-				</p>
-			</div>
-			<div class="flex flex-col items-center gap-2">
-				<img
-					src="/images/work/eduseek/design-decision-1-process.png"
-					alt="Component states for the calendar navigation iterated in Magic Patterns"
-					class="w-full max-w-[736px] rounded-[4px]"
-				/>
-				<p class={caption}>
-					Process: iterated on component states in Magic Patterns before finalizing in Figma, so
-					designs were production-ready from the start.
-				</p>
-			</div>
-		</div>
-	</CaseStudySection>
-
-	<CaseStudySection eyebrow="Design Decisions" heading="Surfacing the story behind the score">
-		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			I designed a Key Insights feature that auto-summarizes the critical learning moments from
-			each AI conversation at no additional generation cost, paired with color-coded progress
-			meters so teachers can read comprehension at a glance and act on it, not just observe it.
-		</p>
-		<div class={panel}>
-			<img
-				src="/images/work/eduseek/Figma_VJ9ajLfiwp.gif"
-				alt="Key Insights summary card and color-coded progress meters"
-				class="w-full max-w-[265px] rounded-[4px]"
-			/>
-			<img
-				src="/images/work/eduseek/Figma_MOmgMZSepS.gif"
-				alt="Key Insights summary card and color-coded progress meters, detail view"
-				class="w-full max-w-[265px] rounded-[4px]"
-			/>
-		</div>
-	</CaseStudySection>
-
-	<CaseStudySection eyebrow="Design Decisions" heading="Extending access beyond the classroom">
-		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Teachers review student progress on the go, not just at their desks, but the existing mobile
-			interface made session replay nearly unusable. I rebuilt the mobile experience to preserve
-			full functionality across phones and tablets, matching the desktop redesign instead of
-			trailing behind it.
-		</p>
-		<div class="flex w-full flex-wrap items-start justify-center gap-8 rounded-[4px] bg-[#1e1e1e] px-4 py-8">
-			<div class="flex flex-col items-center gap-2">
-				<img
-					src="/images/work/eduseek/mobile-before.png"
-					alt="Original mobile session replay view with overlapping components"
-					class="w-full max-w-[322px] rounded-[4px]"
-				/>
-				<p class={caption}>Original mobile view with break due to components not adjusting.</p>
-			</div>
-			<div class="flex flex-col items-center gap-2">
-				<img
-					src="/images/work/eduseek/mobile-after.png"
-					alt="Redesigned mobile session replay view adapted for phone screens"
-					class="w-full max-w-[280px] rounded-[4px]"
-				/>
-				<p class={caption}>
-					Redesigned mobile components to match the new UI and work properly at mobile screen
-					sizes.
 				</p>
 			</div>
 		</div>
