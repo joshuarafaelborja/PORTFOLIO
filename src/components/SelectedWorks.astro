@@ -42,11 +42,11 @@ const works: Work[] = [
 		works.map((work) => (
 			<a href={work.href} class="card-hover flex w-full flex-col gap-3">
 				<p class="font-space-grotesk text-base font-bold text-[#1a1a1a]">{work.title}</p>
-				<p class="font-space-grotesk text-xs text-[#1a1a1a]">{work.tagline}</p>
+				<p class="font-space-grotesk text-base text-[#1a1a1a]">{work.tagline}</p>
 				<div class="card-hover-surface aspect-[960/540] w-full overflow-hidden bg-[#1a1a1a]">
 					<img src={work.img} alt={work.imgAlt} class="h-full w-full object-cover" loading="lazy" />
 				</div>
-				<p class="font-space-grotesk text-xs text-[#1a1a1a]">{work.years}</p>
+				<p class="font-space-grotesk text-base text-[#1a1a1a]">{work.years}</p>
 			</a>
 		))
 	}
