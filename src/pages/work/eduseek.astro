@@ -1,7 +1,12 @@
 ---
 import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
 import CaseStudySection from "../../components/CaseStudySection.astro";
-import SolutionsTabs from "../../components/SolutionsTabs.astro";
+import TabSwitcher, { type TabItem } from "../../components/TabSwitcher.astro";
+import FlipToggle, { type FlipState } from "../../components/FlipToggle.astro";
+import CalendarPicker from "../../components/CalendarPicker.astro";
+import PrototypeEmbed from "../../components/PrototypeEmbed.astro";
+import Stat from "../../components/Stat.astro";
+import StatStrip from "../../components/StatStrip.astro";
 
 // Rebuilt from Figma "eduseek casestudy" frame (node 750:6173)
 // https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=750-6173
@@ -15,9 +20,98 @@ const meta = [
 	{ label: "Deliverables", value: "Calendar Navigation, Key Insights Feature, Mobile Adaptation" },
 ];
 
+// Problem section toggle: steps between the two pain points (Figma 750:6223).
+const problemToggle: [FlipState, FlipState] = [
+	{
+		id: "pain-point-1",
+		label: "Pain Point 1",
+		image: {
+			src: "/images/work/eduseek/firefox_5domEKwecf.gif",
+			alt: "Old week-bar navigation that jumps to the end of the week on click",
+			width: 628,
+			height: 90,
+		},
+		title: "Teachers were clicking blind",
+		body: "Teachers were spending 8+ clicks to reach past sessions, and the existing system would jump straight to the end of the week on click, making it nearly impossible to find a specific conversation.",
+	},
+	{
+		id: "pain-point-2",
+		label: "Pain Point 2",
+		image: {
+			src: "/images/work/eduseek/firefox_DwvTlVIXaS.gif",
+			alt: "Mastery score shown without supporting context",
+			width: 228,
+			height: 327,
+		},
+		title: "Numbers with no story behind them",
+		titleTone: "muted",
+		body: "A mastery score told teachers nothing about where a student actually struggled. Teachers were staring at numbers with no context to act on.",
+		bodyWidth: 278,
+	},
+];
+
+const solutions: TabItem[] = [
+	{
+		id: "navigation",
+		label: "Navigation",
+		tag: "Solution 01",
+		heading: "Fewer clicks to any week",
+		body: "Open the picker, then choose a year, a month, and a week.",
+		stat: "8+ to 4",
+		statLabel: "clicks needed to navigate",
+	},
+	{
+		id: "key-insights",
+		label: "Key Insights",
+		tag: "Solution 02",
+		heading: "The story behind the score",
+		body: "Key Insights flags the exact issue in each conversation, so teachers know where a student needs help.",
+	},
+	{
+		id: "mobile",
+		label: "Mobile",
+		tag: "Solution 03",
+		heading: "Access beyond the classroom",
+		body: "The mobile components were redesigned to work at mobile screen sizes and match the desktop redesign.",
+	},
+];
+
+// Design Decisions 1 toggle: the old design (Problem) vs. the fix (Process).
+// The working calendar sits in its own stage underneath.
+const navigationToggle: [FlipState, FlipState] = [
+	{
+		id: "problem",
+		label: "Problem",
+		image: {
+			src: "/images/work/eduseek/firefox_5domEKwecf.gif",
+			alt: "Original single-scroll week list that took 8+ clicks to reach a session",
+			width: 628,
+			height: 90,
+		},
+		body: "The original ask was to restyle the existing single-scroll week list. The CEO and I walked through the design together on a call, and it was clear restyling wouldn't fix it. Teachers would still need 8+ clicks, and the jump-to-end-of-week behavior meant one wrong click cost a full re-navigation.",
+	},
+	{
+		id: "process",
+		label: "Process",
+		image: {
+			src: "/images/work/eduseek/Figma_7ake3cWfCV.gif",
+			alt: "Year, Month, and Week toggle navigation that holds its position",
+			width: 353,
+			height: 449,
+		},
+		body: "Fix: built a Year / Month / Week picker so any week's chats are 4 clicks away, with navigation that holds its position instead of resetting.",
+	},
+];
+
+const heroStats = [
+	{ value: "8+ → 4", label: "clicks to reach a past session" },
+	{ value: "14 → 17", label: "schools, before and after the redesign" },
+	{ value: "3", label: "features designed: calendar, Key Insights, mobile" },
+	{ value: "16", label: "weeks working directly with the CEO" },
+];
+
 const panel =
 	"flex w-full flex-wrap items-center justify-center gap-4 rounded-[4px] bg-[#1e1e1e] px-4 py-8";
-const caption = "max-w-[480px] text-center font-space-grotesk text-base text-[#e8e7e3]";
 ---
 
 <CaseStudyLayout
@@ -26,7 +120,9 @@ const caption = "max-w-[480px] text-center font-space-grotesk text-base text-[#e
 	heroAlt="Eduseek.AI session replay dashboard"
 	meta={meta}
 >
-	<CaseStudySection eyebrow="Outcome" heading="From an 8-click bottleneck to a 3-click habit" divider={false}>
+	<StatStrip stats={heroStats} class="border-y border-[#d4d2cc]" />
+
+	<CaseStudySection eyebrow="Outcome" heading="From an 8-click bottleneck to a 4-click habit">
 		<div class={panel}>
 			<img
 				src="/images/work/eduseek/Figma_7ake3cWfCV.gif"
@@ -39,7 +135,43 @@ const caption = "max-w-[480px] text-center font-space-grotesk text-base text-[#e
 				class="w-full max-w-[326px] rounded-[4px]"
 			/>
 		</div>
-		<SolutionsTabs />
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				I was tasked with giving Eduseek.AI's session replay a refresh. Over 16 weeks working
+				directly with the CEO, it grew into a full usability pass. I fixed the problems teachers hit
+				and designed new solutions for the ones I found along the way.
+			</p>
+			<ul class="flex list-disc flex-col gap-1 pl-5 font-space-grotesk text-base text-[#1a1a1a]">
+				<li>
+					<strong class="font-bold">Calendar navigation:</strong> The original only let teachers step
+					through one button or arrow at a time, so reaching a past session took 8+ clicks. I designed
+					a Year / Month / Week picker that holds its position and matches the style of the analytics
+					window. Open it, pick a year, a month, then a week, and that week's chats load. That's 4
+					clicks. It also gives schools that have used Eduseek for a long time a way to get back
+					through months and years.
+				</li>
+				<li>
+					<strong class="font-bold">Key Insights:</strong> Teachers could see scores but not why a
+					student was struggling. I suggested and designed Key Insights, which flags the specific
+					issue inside each conversation so teachers know what to work on.
+				</li>
+				<li>
+					<strong class="font-bold">Mobile:</strong> The original page collapsed in on itself on
+					mobile. I redesigned the components to work at mobile sizes and match the new desktop
+					design.
+				</li>
+			</ul>
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				I designed all three and delivered them to the CEO. The redesign also went live when Eduseek
+				went B2C.
+			</p>
+		</div>
+		<!-- Same frame as the interactive calendar frame. -->
+		<div class="w-full bg-[#1e1e1e] px-4 py-12 lg:py-16">
+			<!-- Same heading style as the calendar frame's; mb-6 = its 24px gap. -->
+			<h3 class="mb-6 text-center font-space-grotesk text-base font-bold text-[#ffffff]">Solutions at a glance</h3>
+			<TabSwitcher label="Solutions" items={solutions} tone="dark" />
+		</div>
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow="Context" heading="The platform">
@@ -51,75 +183,170 @@ const caption = "max-w-[480px] text-center font-space-grotesk text-base text-[#e
 			/>
 		</div>
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			EduSeek.AI is a B2B EdTech startup building AI tutoring tools for schools and teachers.
-			Their session replay system lets teachers review AI tutoring conversations and student
-			interactions. I joined as the sole designer for 16 weeks, working directly with the CEO.
+			Eduseek.AI is an EdTech startup building AI tutoring tools. Its session replay system lets
+			teachers review AI tutoring conversations and student interactions. When I joined, 14 schools
+			were testing the original build. I started as the sole designer on the redesign, working
+			directly with the CEO. We synced daily, and I sent him each update and finished component as I
+			completed it. As the scope grew, I worked with another designer on the product. He had built the
+			analytics window, and I matched his design style in session replay so the two felt consistent.
 		</p>
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow="Problem" heading="The data existed, but teachers couldn't use it">
+		<div class="flex flex-col gap-2">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">
+				Teachers were spending a lot of time reviewing tutoring sessions, and the interface fought
+				them the whole way. Three problems stood out:
+			</p>
+			<ul class="flex list-disc flex-col gap-1 pl-5 font-space-grotesk text-base text-[#1a1a1a]">
+				<li>
+					<strong class="font-bold">Too many clicks:</strong> The original calendar only let teachers
+					step through one button or arrow at a time.
+				</li>
+				<li>
+					<strong class="font-bold">Scores with no context:</strong> A mastery score didn't tell
+					teachers where a student actually struggled.
+				</li>
+				<li>
+					<strong class="font-bold">Broken on mobile:</strong> The page collapsed in on itself on
+					mobile. I cover that fix below.
+				</li>
+			</ul>
+		</div>
+		<Stat value="8+" label="clicks to reach a past session with the original calendar" />
+		<FlipToggle states={problemToggle} />
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Design Decisions" heading="From 8+ clicks to 4, with navigation that stays put">
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Teachers were spending hours reviewing tutoring sessions, but the interface made it nearly
-			impossible to find what they needed. Navigation took 8+ clicks to reach a single
-			conversation, mastery scores showed up with no context behind them, and the whole system
-			only worked on desktop. The data existed. The experience to act on it didn't.
+			The original calendar made teachers step through one button or arrow at a time. I rebuilt it
+			as a Year / Month / Week picker. Calendar and fitness apps tend to read top to bottom, so I
+			used the same order. The student you're looking at sits at the top, and all of their chat
+			sessions sit below.
 		</p>
-		<div class="flex w-full flex-col items-center gap-8 rounded-[4px] bg-[#1e1e1e] px-4 py-8">
-			<div class="flex flex-col items-center gap-2">
-				<p class="font-space-grotesk text-base font-bold text-[#e8e7e3]">Pain Point 1</p>
-				<img
-					src="/images/work/eduseek/firefox_5domEKwecf.gif"
-					alt="Old calendar navigation requiring many clicks to reach a session"
-					class="w-full max-w-[628px] rounded-[4px]"
-				/>
-				<p class="font-space-grotesk text-base text-[#e8e7e3]">Teachers were clicking blind</p>
-				<p class={caption}>
-					Teachers were spending 8+ clicks to reach past sessions, and the existing system would
-					jump straight to the end of the week on click, making it nearly impossible to find a
-					specific conversation.
-				</p>
-			</div>
-			<div class="flex flex-col items-center gap-2">
-				<p class="font-space-grotesk text-base font-bold text-[#e8e7e3]">Pain Point 2</p>
-				<img
-					src="/images/work/eduseek/firefox_DwvTlVIXaS.gif"
-					alt="Mastery score shown without supporting context"
-					class="w-full max-w-[228px] rounded-[4px]"
-				/>
-				<p class="font-space-grotesk text-base text-[#e8e7e3]">Numbers with no story behind them</p>
-				<p class={caption}>
-					A mastery score told teachers nothing about where a student actually struggled.
-					Teachers were staring at numbers with no context to act on.
-				</p>
-			</div>
+		<Stat value="4" label="clicks: open the picker, then pick a year, a month and a week" />
+		<FlipToggle states={navigationToggle} />
+		<!-- Working calendar, replacing the static component-states image. Same frame as the stage above. -->
+		<div class="flex w-full flex-col items-center gap-2 bg-[#1e1e1e] px-4 py-12 lg:py-16">
+			<!-- mb-4 + the frame's 8px gap = 24px above the calendar. -->
+			<h3 class="mb-4 text-center font-space-grotesk text-base font-bold text-[#ffffff]">Interactive prototype</h3>
+			<CalendarPicker id="navigation-calendar" />
+			<p class="w-full max-w-[278px] text-center font-space-grotesk text-base text-[#e8e7e3]">
+				Process: I borrowed familiar patterns from Apple Calendar, Canvas, and workout apps, then
+				adapted existing JavaScript calendar widgets to fit Eduseek. I iterated on states in Magic
+				Patterns before finalizing in Figma.
+			</p>
 		</div>
 	</CaseStudySection>
 
-	<CaseStudySection eyebrow="Outcome" heading="What I learned">
-		<div class="flex flex-col gap-2">
-			<p class="font-space-grotesk text-base text-[#1a1a1a]">
-				What started as a UI redesign became a focused diagnostic. Over 16 weeks working directly
-				with the CEO, I solved the core friction points teachers were actually hitting, not just
-				the ones in the original brief.
-			</p>
-			<p class="font-space-grotesk text-base text-[#1a1a1a]">
-				Calendar navigation dropped from 8 clicks to 3. Key Insights shipped as the solution the
-				CEO flagged for surfacing actionable data at no added AI cost. The component library grew
-				from 14 to 17, making handoff to dev straightforward.
+	<CaseStudySection eyebrow="Design Decisions" heading="Surfacing the story behind the score">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Mastery scores told teachers how a student did, but not why. I designed Key Insights to flag
+			the specific issue inside each conversation. Generic bullets about learning objectives
+			wouldn't tell a teacher what to work on, or help the student focus on one thing to improve.
+			Color-coded progress meters sit next to it, so teachers can read comprehension at a glance and
+			act on it, not just observe it.
+		</p>
+		<!-- Example callout; border is the Key Insights purple from the prototype (#8a38f5). -->
+		<div class="flex flex-col gap-1 border-l-4 border-[#8a38f5] px-4 py-3">
+			<p class="font-space-grotesk text-base text-[#1a1a1a]">Example insight</p>
+			<p class="font-space-grotesk text-base font-bold text-[#1a1a1a]">
+				Student confused about what m and b represent in slope-intercept form
 			</p>
 		</div>
+		<!-- Pair side by side from md up (both 332px tall, at or below native size),
+		     stacked below that. 24px gap either way. -->
+		<div class="flex w-full flex-col items-center justify-center gap-6 rounded-[4px] bg-[#1e1e1e] px-4 py-8 md:flex-row">
+			<img
+				src="/images/work/eduseek/Figma_VJ9ajLfiwp.gif"
+				alt="Key Insights card with color-coded progress meters"
+				width="265"
+				height="332"
+				class="h-auto w-full max-w-[265px] md:h-[332px] md:w-auto"
+			/>
+			<img
+				src="/images/work/eduseek/Figma_MOmgMZSepS.gif"
+				alt="Key Insights summary of the critical learning moment in a conversation"
+				width="265"
+				height="335"
+				class="h-auto w-full max-w-[265px] md:h-[332px] md:w-auto"
+			/>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Design Decisions" heading="Extending access beyond the classroom">
+		<p class="font-space-grotesk text-base text-[#1a1a1a]">
+			Teachers review student progress on the go, not just at their desks. On mobile, the original
+			page collapsed in on itself and zoomed in, so session replay was nearly unusable. I redesigned
+			the components to work at mobile screen sizes and match the new desktop design.
+		</p>
+		<!-- Side by side from sm up, stacked on phones. Images capped at the Figma 479px height. -->
+		<div class="grid w-full grid-cols-1 items-start gap-8 rounded-[4px] bg-[#1e1e1e] px-4 py-8 sm:grid-cols-2">
+			<figure class="flex flex-col items-center gap-2">
+				<img
+					src="/images/work/eduseek/mobile-before.png"
+					alt="Original mobile session replay with components breaking out of the layout"
+					width="322"
+					height="484"
+					class="h-auto w-full max-w-[319px]"
+				/>
+				<figcaption class="w-full max-w-[278px] text-center font-space-grotesk text-base text-[#e8e7e3]">
+					Original mobile view: the page collapsed in on itself.
+				</figcaption>
+			</figure>
+			<figure class="flex flex-col items-center gap-2">
+				<img
+					src="/images/work/eduseek/mobile-after.png"
+					alt="Redesigned mobile session replay components"
+					width="393"
+					height="852"
+					class="h-auto w-full max-w-[221px]"
+				/>
+				<figcaption class="w-full max-w-[278px] text-center font-space-grotesk text-base text-[#e8e7e3]">
+					Redesigned components for mobile screen sizes, matching the new desktop UI.
+				</figcaption>
+			</figure>
+		</div>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow="Reflection" heading="What I learned">
+		<ul class="flex list-disc flex-col gap-1 pl-5 font-space-grotesk text-base text-[#1a1a1a]">
+			<li>
+				<strong class="font-bold">Designing for problems nobody had defined.</strong> Some of what I
+				solved wasn't in the original brief. The old calendar had no good way to move across months
+				and years, which would have hurt any school using Eduseek for a long time, so I designed for
+				it. I suggested Key Insights myself and was later handed the mobile redesign. I'm a lot more
+				comfortable now working in the unknown.
+			</li>
+			<li>
+				<strong class="font-bold">Designing to match someone else's work.</strong> Another designer
+				had built an analytics window, so I copied his design style for session replay. Keeping the
+				components consistent made the product feel like one system and made it easier to build.
+			</li>
+			<li>
+				<strong class="font-bold">Trusting my judgment.</strong> To cut the clicks, I researched on my
+				own how other tools handle dates and planning, and chose patterns teachers would already
+				know. The CEO was building it in JavaScript, so I adapted existing JavaScript calendar
+				widgets to fit Eduseek. We synced daily and I sent him every finished component, so I could
+				stay open to feedback while still making the design calls.
+			</li>
+			<li>
+				<strong class="font-bold">Prototyping before handoff.</strong> I tested my designs in Magic
+				Patterns to check they'd work with the existing site, so there was less for engineering to
+				build. At the time, using AI for UX work wasn't common practice on the team yet.
+			</li>
+		</ul>
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow="Try it" heading="INTERACTIVE PROTOTYPE">
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Explore the session replay dashboard prototype below, built in Magic Patterns to test the
-			calendar navigation and Key Insights feature before handoff to engineering.
+			Explore the session replay prototype I built in Magic Patterns. I used it to test the calendar
+			navigation and Key Insights against the existing site, so there was less for engineering to
+			build.
 		</p>
-		<iframe
+		<PrototypeEmbed
 			src="https://project-session-replay-dashboard-ui-896.magicpatterns.app"
-			width="100%"
-			height="700"
-			style="border-radius: 8px; border: 1px solid #d4d2cc;"
-			title="Eduseek.AI interactive prototype"></iframe>
+			title="Eduseek.AI interactive prototype"
+		/>
 	</CaseStudySection>
 </CaseStudyLayout>

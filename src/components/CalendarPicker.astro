@@ -1,0 +1,615 @@
+---
+// Working Year / Month / Week calendar picker for the EduSeek case study (Design
+// Decisions 1, interactive frame). Built from Figma "Tab widget" (node 440:1843) and
+// the calendar component set (node 440:1868): closed, hover, and open Week / Month / Year.
+//
+// Drill-down: picking a year jumps to that year's months, picking a month jumps to
+// the weeks overlapping it, picking a week is the final selection. Before any year
+// is picked, the Month / Week tabs show the default "this month / this week and
+// earlier" lists (the Figma frames).
+//
+// Behavior is the point of the case study: navigation holds its position. The
+// picker remembers the selected year, month and week; going back up a tab shows the
+// earlier selection, and a list only changes (and starts at the top) when the
+// selection feeding it changes.
+//
+// Dates come from calendar-picker-data.ts ("today" pinned to Jan 28 2026, Monday-start
+// weeks), shared by this server render and the script below.
+//
+// Font: Figma uses Satoshi Medium, which the site doesn't load, so this uses
+// Space Grotesk 500 (already loaded by Layout.astro).
+import { years, defaultMonths, defaultWeeks, type CalRow } from "./calendar-picker-data";
+
+interface Props {
+	/** Prefix for element ids, so several pickers can live on one page. */
+	id?: string;
+}
+
+const { id = "calendar" } = Astro.props;
+
+// Tab order matches Figma (Year, Month, Week); Week is active on load. Each list
+// starts with its current period selected.
+const tabs: { key: string; label: string; rows: CalRow[] }[] = [
+	{ key: "year", label: "Year", rows: years() },
+	{ key: "month", label: "Month", rows: defaultMonths() },
+	{ key: "week", label: "Week", rows: defaultWeeks() },
+];
+const DEFAULT_TAB = 2;
+const initial = tabs[DEFAULT_TAB].rows[0];
+
+// uil:calendar from Figma (node 440:1871), inlined.
+const calendarPath =
+	"M19 4H17V3C17 2.73478 16.8946 2.48043 16.7071 2.29289C16.5196 2.10536 16.2652 2 16 2C15.7348 2 15.4804 2.10536 15.2929 2.29289C15.1054 2.48043 15 2.73478 15 3V4H9V3C9 2.73478 8.89464 2.48043 8.70711 2.29289C8.51957 2.10536 8.26522 2 8 2C7.73478 2 7.48043 2.10536 7.29289 2.29289C7.10536 2.48043 7 2.73478 7 3V4H5C4.20435 4 3.44129 4.31607 2.87868 4.87868C2.31607 5.44129 2 6.20435 2 7V19C2 19.7956 2.31607 20.5587 2.87868 21.1213C3.44129 21.6839 4.20435 22 5 22H19C19.7956 22 20.5587 21.6839 21.1213 21.1213C21.6839 20.5587 22 19.7956 22 19V7C22 6.20435 21.6839 5.44129 21.1213 4.87868C20.5587 4.31607 19.7956 4 19 4ZM20 19C20 19.2652 19.8946 19.5196 19.7071 19.7071C19.5196 19.8946 19.2652 20 19 20H5C4.73478 20 4.48043 19.8946 4.29289 19.7071C4.10536 19.5196 4 19.2652 4 19V12H20V19ZM20 10H4V7C4 6.73478 4.10536 6.48043 4.29289 6.29289C4.48043 6.10536 4.73478 6 5 6H7V7C7 7.26522 7.10536 7.51957 7.29289 7.70711C7.48043 7.89464 7.73478 8 8 8C8.26522 8 8.51957 7.89464 8.70711 7.70711C8.89464 7.51957 9 7.26522 9 7V6H15V7C15 7.26522 15.1054 7.51957 15.2929 7.70711C15.4804 7.89464 15.7348 8 16 8C16.2652 8 16.5196 7.89464 16.7071 7.70711C16.8946 7.51957 17 7.26522 17 7V6H19C19.2652 6 19.5196 6.10536 19.7071 6.29289C19.8946 6.48043 20 6.73478 20 7V10Z";
+// weui:arrow-filled from Figma (node 440:1874), a right-pointing chevron rotated by CSS.
+const chevronPath =
+	"M13.5423 16.948L5.99959 24.4907L4.11426 22.6054L10.7143 16.0054L4.11426 9.40535L5.99959 7.52002L13.5423 15.0627C13.7922 15.3127 13.9326 15.6518 13.9326 16.0054C13.9326 16.3589 13.7922 16.698 13.5423 16.948Z";
+---
+
+<div
+	class="cal font-space-grotesk"
+	data-calendar
+	data-open="true"
+	data-default-tab={DEFAULT_TAB}
+	aria-live="off"
+>
+	<div class="cal-panel">
+		<button
+			type="button"
+			class="cal-header"
+			aria-expanded="true"
+			aria-controls={`${id}-body`}
+			data-cal-header
+		>
+			<svg class="cal-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+				<path d={calendarPath} fill="#531AC7" />
+			</svg>
+			<span class="cal-header-label" data-cal-label>
+				<span>{initial.current}</span> <span class="cal-sep" aria-hidden="true">•</span> {initial.value}
+			</span>
+			<span class="cal-chevron" aria-hidden="true">
+				<svg width="16" height="32" viewBox="0 0 16 32">
+					<path d={chevronPath} fill="#000" fill-rule="evenodd" clip-rule="evenodd" />
+				</svg>
+			</span>
+		</button>
+
+		<div class="cal-body" id={`${id}-body`} data-cal-body>
+			<div class="cal-tabs-wrap">
+				<div class="cal-tabs" role="tablist" aria-label="Calendar range">
+					{
+						tabs.map((t, i) => (
+							<button
+								type="button"
+								role="tab"
+								class="cal-tab"
+								id={`${id}-tab-${t.key}`}
+								aria-controls={`${id}-list-${t.key}`}
+								aria-selected={i === DEFAULT_TAB ? "true" : "false"}
+								tabindex={i === DEFAULT_TAB ? 0 : -1}
+							>
+								{t.label}
+							</button>
+						))
+					}
+				</div>
+			</div>
+
+			<div class="cal-lists">
+				{
+					tabs.map((t, i) => (
+						<ul
+							class="cal-list"
+							role="listbox"
+							id={`${id}-list-${t.key}`}
+							aria-labelledby={`${id}-tab-${t.key}`}
+							data-active={i === DEFAULT_TAB ? "true" : "false"}
+						>
+							{t.rows.map((r, j) => (
+								<li
+									class="cal-row"
+									role="option"
+									aria-selected={j === 0 ? "true" : "false"}
+									tabindex={j === 0 ? 0 : -1}
+									data-key={r.key}
+								>
+									<svg class="cal-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+										<path d={calendarPath} fill="#531AC7" />
+									</svg>
+									<span class="cal-row-label" data-cal-row-label>
+										{r.current ? (
+											<Fragment>
+												<span>{r.current}</span> <span class="cal-sep" aria-hidden="true">•</span> {r.value}
+											</Fragment>
+										) : (
+											r.value
+										)}
+									</span>
+								</li>
+							))}
+						</ul>
+					))
+				}
+			</div>
+		</div>
+	</div>
+
+	<!-- Blueprints for rows the script builds when drilling down (they carry this
+	     component's scoped-style attribute, so the cloned rows are styled). -->
+	<template data-cal-row-template>
+		<li class="cal-row" role="option" aria-selected="false" tabindex="-1">
+			<svg class="cal-icon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
+				<path d={calendarPath} fill="#531AC7" />
+			</svg>
+			<span class="cal-row-label" data-cal-row-label></span>
+		</li>
+	</template>
+	<template data-cal-sep-template><span class="cal-sep" aria-hidden="true">•</span></template>
+</div>
+
+<style>
+	/* Outer box always reserves the open height, so closing the panel never moves
+	   what's below it. */
+	.cal {
+		width: min(314px, 100%);
+		height: 417px;
+		margin-inline: auto;
+		text-align: left;
+	}
+
+	/* Panel. Border is always 2px (transparent when closed) so hover/open never
+	   change its size. */
+	.cal-panel {
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		width: 100%;
+		padding: 16px 10px;
+		border: 2px solid transparent;
+		border-radius: 10px;
+		background: #fff;
+		transition: border-color 150ms ease-out;
+	}
+	.cal-panel:hover,
+	.cal[data-open="true"] .cal-panel {
+		border-color: #7c3aed;
+	}
+	.cal[data-open="true"] .cal-panel {
+		height: 417px;
+	}
+
+	.cal-icon {
+		flex: none;
+		width: 24px;
+		height: 24px;
+	}
+	/* Real spaces surround the dot (so screen readers hear "This Week Jan 26 ..."),
+	   plus margin to match Figma's wider gap. */
+	.cal-sep {
+		margin: 0 3px 0 4px;
+	}
+
+	/* Header row: icon, current selection, chevron (down closed, up open). */
+	.cal-header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+		min-width: 0;
+		padding: 0;
+		border: 0;
+		border-radius: 6px;
+		background: none;
+		color: #4b5563;
+		font: inherit;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: normal;
+		text-align: left;
+		cursor: pointer;
+	}
+	/* Takes the free width, so the chevron stays put whatever the label length. */
+	.cal-header-label {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.cal-chevron {
+		display: flex;
+		flex: none;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 16px;
+	}
+	.cal-chevron svg {
+		transform: rotate(90deg);
+		transition: transform 150ms ease-out;
+	}
+	/* Figma's open-state chevron is the same glyph at 13x26 instead of 16x32. */
+	.cal[data-open="true"] .cal-chevron svg {
+		transform: rotate(-90deg) scale(0.8125);
+	}
+
+	.cal-body {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: 12px;
+		min-height: 0;
+	}
+	.cal-body[hidden] {
+		display: none;
+	}
+
+	/* Tab widget: white wrapper, grey track, purple active segment. */
+	.cal-tabs-wrap {
+		display: flex;
+		flex: none;
+		align-items: center;
+		width: 100%;
+		max-width: 280px;
+		height: 55px;
+		border-radius: 10px;
+		background: #fff;
+	}
+	.cal-tabs {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		padding: 4px 0;
+		border-radius: 8px;
+		background: #6c7683;
+	}
+	.cal-tab {
+		padding: 8px 24px;
+		border: 0;
+		border-radius: 6px;
+		background: transparent;
+		color: #fff;
+		font: inherit;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: normal;
+		white-space: nowrap;
+		cursor: pointer;
+		transition: background-color 150ms ease-out;
+	}
+	.cal-tab[aria-selected="true"] {
+		background: #531ac7;
+	}
+	/* Narrow screens: tighten segment padding so the track fits at 320px. */
+	@media (max-width: 379px) {
+		.cal-tab {
+			padding: 8px 12px;
+		}
+	}
+
+	/* Lists share one grid cell; each scrolls on its own and keeps its scroll
+	   position while hidden. */
+	.cal-lists {
+		display: grid;
+		flex: 1;
+		grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+		min-height: 0;
+	}
+	.cal-list {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		grid-area: 1 / 1;
+		min-height: 0;
+		margin: 0;
+		padding: 0;
+		overflow-y: auto;
+		list-style: none;
+		scrollbar-color: #d9cdf5 transparent;
+		scrollbar-width: thin;
+		/* Same row width whether or not a list overflows (drilled lists can be short). */
+		scrollbar-gutter: stable;
+		transition:
+			opacity 180ms ease-out,
+			visibility 0s linear 180ms;
+	}
+	.cal-list::-webkit-scrollbar {
+		width: 6px;
+	}
+	.cal-list::-webkit-scrollbar-thumb {
+		border-radius: 3px;
+		background: #d9cdf5;
+	}
+	.cal-list[data-active="true"] {
+		transition:
+			opacity 180ms ease-out,
+			visibility 0s linear 0s;
+	}
+	.cal-list[data-active="false"] {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	.cal-row {
+		box-sizing: border-box;
+		display: flex;
+		flex: none;
+		align-items: center;
+		gap: 12px;
+		width: 100%;
+		max-width: 280px;
+		padding: 12px;
+		border-radius: 10px;
+		color: #4b5563;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: normal;
+		cursor: pointer;
+		transition: background-color 150ms ease-out;
+	}
+	/* Every row, selected or not, uses the same centered label column, so selecting
+	   a row only changes its background. */
+	.cal-row-label {
+		flex: 1;
+		min-width: 0;
+		text-align: center;
+	}
+	/* Quiet hover tint (not in Figma). */
+	.cal-row:hover {
+		background: #f3eefd;
+	}
+	.cal-row[aria-selected="true"] {
+		background: #bfa5f3;
+	}
+
+	.cal-header:focus-visible {
+		outline: 2px solid #531ac7;
+		outline-offset: 3px;
+	}
+	.cal-tab:focus-visible {
+		outline: 2px solid #fff;
+		outline-offset: -4px;
+	}
+	.cal-row:focus-visible {
+		outline: 2px solid #531ac7;
+		outline-offset: -2px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cal-panel,
+		.cal-chevron svg,
+		.cal-tab,
+		.cal-row,
+		.cal-list,
+		.cal-list[data-active="true"] {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	import {
+		years,
+		defaultMonths,
+		defaultWeeks,
+		monthsOf,
+		weeksOf,
+		type CalRow,
+	} from "./calendar-picker-data";
+
+	const YEAR = 0;
+	const MONTH = 1;
+	const WEEK = 2;
+
+	document.querySelectorAll<HTMLElement>("[data-calendar]").forEach((root) => {
+		const header = root.querySelector<HTMLButtonElement>("[data-cal-header]")!;
+		const headerLabel = root.querySelector<HTMLElement>("[data-cal-label]")!;
+		const body = root.querySelector<HTMLElement>("[data-cal-body]")!;
+		const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+		const lists = Array.from(root.querySelectorAll<HTMLElement>('[role="listbox"]'));
+		const rowTemplate = root.querySelector<HTMLTemplateElement>("[data-cal-row-template]")!;
+		const sepTemplate = root.querySelector<HTMLTemplateElement>("[data-cal-sep-template]")!;
+
+		// What the user has picked; null = nothing picked at that level yet.
+		const sel: { year: number | null; month: { y: number; m: number } | null; week: number | null } = {
+			year: null,
+			month: null,
+			week: null,
+		};
+
+		// Which list a tab should show for the current selection.
+		const listKey = (t: number) => {
+			if (t === YEAR) return "years";
+			if (t === MONTH) return sel.year === null ? "default" : `y:${sel.year}`;
+			return sel.month === null ? "default" : `m:${sel.month.y}-${sel.month.m}`;
+		};
+		const listRows = (t: number): CalRow[] => {
+			if (t === YEAR) return years();
+			if (t === MONTH) return sel.year === null ? defaultMonths() : monthsOf(sel.year);
+			return sel.month === null ? defaultWeeks() : weeksOf(sel.month.y, sel.month.m);
+		};
+
+		// Rows each tab currently shows (the server rendered the default lists).
+		const shown = [YEAR, MONTH, WEEK].map((t) => ({ key: listKey(t), rows: listRows(t) }));
+		const options = (t: number) => Array.from(lists[t].querySelectorAll<HTMLElement>('[role="option"]'));
+		const scroll = lists.map(() => 0);
+		let activeTab = Number(root.dataset.defaultTab ?? 0);
+
+		lists.forEach((list, i) => list.addEventListener("scroll", () => (scroll[i] = list.scrollTop)));
+
+		const fillLabel = (el: HTMLElement, row: CalRow) => {
+			el.replaceChildren();
+			if (row.current) {
+				const lead = document.createElement("span");
+				lead.textContent = row.current;
+				el.append(lead, " ", sepTemplate.content.cloneNode(true), ` ${row.value}`);
+			} else el.append(row.value);
+		};
+
+		// Highlighted row. Default lists: the user's pick, else the current period.
+		// Drilled lists: only the user's pick.
+		const highlightKey = (t: number): string | null => {
+			const fallback = shown[t].key === "default" || t === YEAR ? (shown[t].rows.find((r) => r.current)?.key ?? null) : null;
+			if (t === YEAR) return sel.year !== null ? `y:${sel.year}` : fallback;
+			if (t === MONTH) return sel.month ? `m:${sel.month.y}-${sel.month.m}` : fallback;
+			return sel.week !== null ? `w:${sel.week}` : fallback;
+		};
+
+		// Selection only changes aria-selected (background); roving tabindex follows it.
+		const applyHighlight = (t: number) => {
+			const key = highlightKey(t);
+			const opts = options(t);
+			const idx = opts.findIndex((o) => o.dataset.key === key);
+			opts.forEach((o, i) => {
+				o.setAttribute("aria-selected", String(i === idx));
+				o.tabIndex = i === Math.max(idx, 0) ? 0 : -1;
+			});
+		};
+
+		const render = (t: number) => {
+			shown[t] = { key: listKey(t), rows: listRows(t) };
+			lists[t].replaceChildren(
+				...shown[t].rows.map((row) => {
+					const li = rowTemplate.content.firstElementChild!.cloneNode(true) as HTMLElement;
+					li.dataset.key = row.key;
+					fillLabel(li.querySelector<HTMLElement>("[data-cal-row-label]")!, row);
+					return li;
+				}),
+			);
+			lists[t].scrollTop = 0;
+			scroll[t] = 0;
+		};
+
+		// Scroll only the list itself to show a row (never scrollIntoView, which also
+		// scrolls the frame and the page).
+		const reveal = (t: number, row: HTMLElement | undefined) => {
+			if (!row) return;
+			const list = lists[t];
+			if (row.offsetTop < list.scrollTop) list.scrollTop = row.offsetTop;
+			else if (row.offsetTop + row.offsetHeight > list.scrollTop + list.clientHeight)
+				list.scrollTop = row.offsetTop + row.offsetHeight - list.clientHeight;
+		};
+		const revealSelected = (t: number) =>
+			reveal(t, options(t).find((o) => o.getAttribute("aria-selected") === "true"));
+
+		const setOpen = (open: boolean) => {
+			root.dataset.open = String(open);
+			header.setAttribute("aria-expanded", String(open));
+			body.hidden = !open;
+			if (open) {
+				lists.forEach((list, i) => (list.scrollTop = scroll[i]));
+				revealSelected(activeTab);
+			}
+		};
+
+		// Show a tab. Its list is rebuilt (starting at the top) only if the selection
+		// feeding it changed; otherwise it keeps its rows and scroll position.
+		const selectTab = (t: number, focus: "tab" | "list" | null = null) => {
+			const rebuilt = shown[t].key !== listKey(t);
+			if (rebuilt) render(t);
+			applyHighlight(t);
+			activeTab = t;
+			tabs.forEach((tab, j) => {
+				const active = j === t;
+				tab.setAttribute("aria-selected", String(active));
+				tab.tabIndex = active ? 0 : -1;
+				lists[j].dataset.active = String(active);
+			});
+			if (!rebuilt) revealSelected(t);
+			if (focus === "tab") tabs[t].focus({ preventScroll: true });
+			if (focus === "list") options(t).find((o) => o.tabIndex === 0)?.focus({ preventScroll: true });
+		};
+
+		const pick = (t: number, li: HTMLElement, fromKeyboard: boolean) => {
+			const row = shown[t].rows.find((r) => r.key === li.dataset.key)!;
+			if (t === YEAR) {
+				// A different year clears the month and week picked under the old one.
+				if (row.year !== sel.year) {
+					sel.month = null;
+					sel.week = null;
+				}
+				sel.year = row.year;
+			} else if (t === MONTH) {
+				// A different month clears the week; a month from the default list sets its year.
+				if (!sel.month || sel.month.y !== row.year || sel.month.m !== row.month) sel.week = null;
+				sel.year = row.year;
+				sel.month = { y: row.year, m: row.month! };
+			} else {
+				sel.week = row.weekStart!;
+				// A week from the default list sets its month and year.
+				if (!sel.month) {
+					sel.month = { y: row.year, m: row.month! };
+					sel.year = row.year;
+				}
+			}
+			fillLabel(headerLabel, row);
+			if (t === WEEK) applyHighlight(WEEK);
+			else selectTab(t + 1, fromKeyboard ? "list" : null);
+		};
+
+		header.addEventListener("click", () => setOpen(root.dataset.open !== "true"));
+
+		tabs.forEach((tab, i) => {
+			tab.addEventListener("click", () => selectTab(i));
+			tab.addEventListener("keydown", (e) => {
+				const keys: Record<string, number> = {
+					ArrowRight: (i + 1) % tabs.length,
+					ArrowLeft: (i - 1 + tabs.length) % tabs.length,
+					Home: 0,
+					End: tabs.length - 1,
+				};
+				if (e.key in keys) {
+					e.preventDefault();
+					selectTab(keys[e.key], "tab");
+				}
+			});
+		});
+
+		// Rows are rebuilt at runtime, so events are delegated to the lists.
+		lists.forEach((list, t) => {
+			// Don't let a mouse click focus the row: focusing can scroll the frame / page.
+			list.addEventListener("mousedown", (e) => {
+				if ((e.target as HTMLElement).closest('[role="option"]')) e.preventDefault();
+			});
+			list.addEventListener("click", (e) => {
+				const li = (e.target as HTMLElement).closest<HTMLElement>('[role="option"]');
+				if (li) pick(t, li, false);
+			});
+			list.addEventListener("keydown", (e) => {
+				const li = (e.target as HTMLElement).closest<HTMLElement>('[role="option"]');
+				if (!li) return;
+				const opts = options(t);
+				const j = opts.indexOf(li);
+				// Arrow keys move focus (roving tabindex); Enter / Space select.
+				const keys: Record<string, number> = {
+					ArrowDown: Math.min(j + 1, opts.length - 1),
+					ArrowUp: Math.max(j - 1, 0),
+					Home: 0,
+					End: opts.length - 1,
+				};
+				if (e.key in keys) {
+					e.preventDefault();
+					const next = opts[keys[e.key]];
+					opts.forEach((o) => (o.tabIndex = o === next ? 0 : -1));
+					next.focus({ preventScroll: true });
+					reveal(t, next);
+				} else if (e.key === "Enter" || e.key === " ") {
+					e.preventDefault();
+					pick(t, li, true);
+				}
+			});
+		});
+
+		root.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && root.dataset.open === "true") {
+				e.preventDefault();
+				setOpen(false);
+				header.focus({ preventScroll: true });
+			}
+		});
+
+		// Make sure the default selection is in view on load.
+		revealSelected(activeTab);
+	});
+</script>

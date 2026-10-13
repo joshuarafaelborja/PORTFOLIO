@@ -1,0 +1,336 @@
+---
+// Two-state toggle that flips a dark stage between a pair of states (e.g. Pain
+// Point 1 <-> Pain Point 2). Built for the EduSeek Problem section (Figma 750:6223,
+// interaction from frames 903:2114 / 903:2130). The button shows the current
+// state's label with a "1 / 2" count under it; each click switches to the other
+// state and back.
+//
+// Both states are stacked in one grid cell, so the stage is always as tall as the
+// taller state: the button never moves and the height never jumps on swap. The
+// shorter state's content is centered vertically in that space.
+
+export interface FlipState {
+	id: string;
+	/** Button label while this state is showing, e.g. "Pain Point 1". */
+	label: string;
+	/** width/height are the display size in px (also caps the width) and reserve the aspect ratio. */
+	image: { src: string; alt: string; width: number; height: number };
+	/** Optional line under the image, e.g. "Teachers were clicking blind". */
+	title?: string;
+	body: string;
+	/** Text column width in px; defaults to the image width, capped at 560px. */
+	bodyWidth?: number;
+	/** Title color: "muted" uses #d4d2cc, default uses #e8e7e3. */
+	titleTone?: "default" | "muted";
+}
+
+interface Props {
+	/** Exactly two states: [shown on load, shown after click]. */
+	states: [FlipState, FlipState];
+}
+
+const { states } = Astro.props;
+const [first, second] = states;
+// Default caption width: as wide as the image, up to this (and never wider than the stage).
+const CAPTION_MAX = 560;
+---
+
+<div
+	class="flex min-h-[480px] w-full flex-col items-center justify-center gap-6 bg-[#1e1e1e] px-4 pt-24 pb-12 sm:pt-12 lg:py-16"
+	data-flip-toggle
+	data-label-a={first.label}
+	data-label-b={second.label}
+>
+	<div class="flex flex-col items-center gap-2">
+		<div class="relative">
+			<button
+				type="button"
+				class="flip-btn flex min-w-[180px] cursor-pointer items-center justify-center gap-2 rounded-[12px] bg-[#531ac7] p-3 font-space-grotesk text-base font-bold whitespace-nowrap text-[#f3f1f1]"
+				data-flip-btn
+			>
+				<span data-flip-label>{first.label}</span>
+				<span class="sr-only" data-flip-hint>{`, show ${second.label}`}</span>
+				<!-- Swap icon: two opposing arrows. -->
+				<svg
+					class="flip-icon shrink-0"
+					width="16"
+					height="16"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="M2.5 5.5h10M10 3l2.5 2.5L10 8" />
+					<path d="M13.5 10.5h-10M6 8l-2.5 2.5L6 13" />
+				</svg>
+			</button>
+
+			<!-- "click me" callout. Decorative (the button carries the label), hidden after first click. -->
+			<div class="flip-callout" aria-hidden="true" data-flip-callout>
+				<svg
+					class="flip-callout-arrow"
+					width="64"
+					height="40"
+					viewBox="0 0 64 40"
+					fill="none"
+					stroke="#e8e7e3"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<!-- Slightly wobbly shaft from the label down-left to the tip, then two head strokes. -->
+					<path class="flip-draw" pathLength="1" d="M60 8c-6 1-11 6-15 12-5 7-12 12-20 13-6 1-12 0-19-2" />
+					<path class="flip-draw flip-draw-head" pathLength="1" d="M6 31c3-4 5-7 8-9" />
+					<path class="flip-draw flip-draw-head" pathLength="1" d="M6 31c4 1 8 3 11 6" />
+				</svg>
+				<span class="flip-callout-text font-space-grotesk text-sm text-[#e8e7e3]">click me</span>
+			</div>
+		</div>
+		<!-- Visual count only; the button's hidden hint already tells screen readers what's next. -->
+		<p class="font-space-grotesk text-sm text-[#d4d2cc] tabular-nums" aria-hidden="true" data-flip-count>1 / 2</p>
+	</div>
+
+	<div class="grid w-full justify-items-center" aria-live="polite" data-flip-stage>
+		{
+			states.map((s, i) => (
+				<div
+					class="flip-panel flex w-full flex-col items-center justify-center gap-2 [grid-area:1/1]"
+					data-active={i === 0 ? "true" : "false"}
+					aria-hidden={i === 0 ? undefined : "true"}
+					inert={i !== 0}
+				>
+					<img
+						src={s.image.src}
+						alt={s.image.alt}
+						width={s.image.width}
+						height={s.image.height}
+						class="h-auto w-full max-w-full"
+						style={`max-width: ${s.image.width}px`}
+					/>
+					{s.title && (
+						<p
+							class:list={[
+								"font-space-grotesk text-base",
+								s.titleTone === "muted" ? "text-[#d4d2cc]" : "text-[#e8e7e3]",
+							]}
+						>
+							{s.title}
+						</p>
+					)}
+					<p
+						class="w-full text-center font-space-grotesk text-base text-[#e8e7e3]"
+						style={`max-width: ${s.bodyWidth ?? Math.min(s.image.width, CAPTION_MAX)}px`}
+					>
+						{s.body}
+					</p>
+				</div>
+			))
+		}
+	</div>
+</div>
+
+<style>
+	/* Button: EduSeek purple (#531ac7, same as TabSwitcher / BeforeAfterToggle active state).
+	   Lighter + lift + shadow on hover, deeper + press down on click, lavender focus ring
+	   (#c3afeb, BeforeAfterToggle's ring) for the dark stage. */
+	.flip-btn {
+		transition:
+			transform 200ms ease-out,
+			box-shadow 200ms ease-out,
+			background-color 200ms ease-out;
+	}
+	.flip-btn:hover {
+		background-color: #6230d6;
+		transform: translateY(-2px);
+		box-shadow: 0 8px 18px -8px rgba(83, 26, 199, 0.8);
+	}
+	.flip-btn:active {
+		background-color: #4514a8;
+		transform: translateY(1px);
+		box-shadow: none;
+		transition-duration: 60ms;
+	}
+	.flip-btn:focus-visible {
+		outline: 2px solid #c3afeb;
+		outline-offset: 2px;
+	}
+	.flip-icon {
+		transition: transform 250ms ease-out;
+	}
+	[data-flip-toggle][data-state="b"] .flip-icon {
+		transform: rotate(180deg);
+	}
+
+	/* Cross-fade: both panels share one grid cell; the outgoing one fades out
+	   while the incoming one fades in. visibility is delayed on the way out so
+	   the fade finishes before the panel is hidden. */
+	.flip-panel {
+		transition:
+			opacity 250ms ease-out,
+			visibility 0s linear 250ms;
+	}
+	.flip-panel[data-active="true"] {
+		transition:
+			opacity 250ms ease-out,
+			visibility 0s linear 0s;
+	}
+	.flip-panel[data-active="false"] {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	/* "click me" callout. Desktop: to the right of the button, arrow pointing left at it.
+	   Positioned absolutely off the button wrapper so it never moves the button. */
+	.flip-callout {
+		position: absolute;
+		left: calc(100% + 6px);
+		top: 50%;
+		display: flex;
+		align-items: flex-start;
+		gap: 2px;
+		pointer-events: none;
+		transform: translateY(-80%);
+		transform-origin: left center;
+		transition:
+			opacity 200ms ease-out,
+			visibility 0s linear 200ms;
+	}
+	.flip-callout-text {
+		rotate: -6deg;
+		white-space: nowrap;
+	}
+	[data-flip-toggle][data-callout="dismissed"] .flip-callout {
+		opacity: 0;
+		visibility: hidden;
+	}
+
+	/* Phone: no room beside a 180px button, so sit above its right half
+	   (the stage gets extra top padding for this) and tilt the arrow down at it. */
+	@media (max-width: 639px) {
+		.flip-callout {
+			left: 50%;
+			top: auto;
+			bottom: calc(100% + 2px);
+			transform: none;
+		}
+		.flip-callout-arrow {
+			width: 48px;
+			height: 30px;
+			rotate: -35deg;
+			margin-top: 14px;
+		}
+	}
+
+	/* Draw-on, started once the stage scrolls into view (data-callout="drawn"). */
+	.flip-draw {
+		stroke-dasharray: 1;
+		stroke-dashoffset: 1;
+	}
+	/* Keep strokes drawn while the dismissed callout fades out. */
+	[data-flip-toggle][data-callout="dismissed"] .flip-draw {
+		stroke-dashoffset: 0;
+	}
+	[data-flip-toggle][data-callout="drawn"] .flip-draw {
+		animation: flip-draw 600ms ease-out forwards;
+	}
+	[data-flip-toggle][data-callout="drawn"] .flip-draw-head {
+		animation-duration: 200ms;
+		animation-delay: 600ms;
+	}
+	/* Gentle nudge toward the button every 4s, after the draw finishes. */
+	[data-flip-toggle][data-callout="drawn"] .flip-callout {
+		animation: flip-wiggle 4s ease-in-out 1.2s infinite;
+	}
+
+	@keyframes flip-draw {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+	@keyframes flip-wiggle {
+		0%,
+		15%,
+		100% {
+			rotate: 0deg;
+		}
+		4% {
+			rotate: -4deg;
+		}
+		8% {
+			rotate: 3deg;
+		}
+		12% {
+			rotate: -2deg;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.flip-panel,
+		.flip-panel[data-active="true"],
+		.flip-btn,
+		.flip-icon,
+		.flip-callout {
+			transition: none;
+		}
+		.flip-btn:hover,
+		.flip-btn:active {
+			transform: none;
+		}
+		/* Arrow shown fully drawn, no draw-on or wiggle. */
+		.flip-draw {
+			stroke-dashoffset: 0;
+		}
+		[data-flip-toggle] .flip-draw,
+		[data-flip-toggle] .flip-callout {
+			animation: none !important;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-flip-toggle]").forEach((root) => {
+		const btn = root.querySelector<HTMLButtonElement>("[data-flip-btn]")!;
+		const label = root.querySelector<HTMLElement>("[data-flip-label]")!;
+		const hint = root.querySelector<HTMLElement>("[data-flip-hint]")!;
+		const count = root.querySelector<HTMLElement>("[data-flip-count]")!;
+		const [panelA, panelB] = Array.from(root.querySelectorAll<HTMLElement>(".flip-panel"));
+		const labelA = root.dataset.labelA!;
+		const labelB = root.dataset.labelB!;
+		let showingB = false;
+
+		const setPanel = (panel: HTMLElement, active: boolean) => {
+			panel.dataset.active = String(active);
+			panel.inert = !active;
+			if (active) panel.removeAttribute("aria-hidden");
+			else panel.setAttribute("aria-hidden", "true");
+		};
+
+		// Start the arrow draw-on when the stage is actually on screen, not at page load.
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((e) => e.isIntersecting)) {
+					if (root.dataset.callout !== "dismissed") root.dataset.callout = "drawn";
+					observer.disconnect();
+				}
+			},
+			{ threshold: 0.4 },
+		);
+		observer.observe(root);
+
+		btn.addEventListener("click", () => {
+			showingB = !showingB;
+			root.dataset.state = showingB ? "b" : "a";
+			setPanel(panelA, !showingB);
+			setPanel(panelB, showingB);
+			label.textContent = showingB ? labelB : labelA;
+			hint.textContent = `, show ${showingB ? labelA : labelB}`;
+			count.textContent = showingB ? "2 / 2" : "1 / 2";
+			// Callout has done its job after the first click; stays hidden for this page view.
+			root.dataset.callout = "dismissed";
+			observer.disconnect();
+		});
+	});
+</script>

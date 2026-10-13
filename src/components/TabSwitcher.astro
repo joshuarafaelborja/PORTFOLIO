@@ -1,0 +1,197 @@
+---
+// Interactive button switcher used on the EduSeek case study (Solutions, Pain Points).
+// Built from Figma "active nav menus" (node 867:438) and "nav button" variants (node 861:285)
+// https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=867-438
+// State is local to the component: clicking a nav button marks it active and swaps
+// the right-hand panel. The first item is active on load.
+// The container height stays fixed to the tallest panel across all states.
+// No background of its own: the page places it on a light section or inside a dark
+// frame, and `tone` picks the matching text colors.
+
+export interface TabItem {
+	id: string;
+	label: string;
+	tag: string;
+	heading: string;
+	body?: string;
+	/** Screenshot/GIF shown under the headline; maxWidth is its display cap in px. */
+	image?: { src: string; alt: string; maxWidth: number };
+	stat?: string;
+	statLabel?: string;
+}
+
+interface Props {
+	/** Accessible name for the button list, e.g. "Solutions". */
+	label: string;
+	items: TabItem[];
+	/** "dark" = light text, for use inside a dark (#1e1e1e) frame. */
+	tone?: "light" | "dark";
+}
+
+const { label, items, tone = "light" } = Astro.props;
+// Prefix element ids so several switchers can live on one page.
+const idPrefix = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+---
+
+<div
+	class="tab-switcher flex w-full flex-col gap-6 sm:gap-8"
+	data-tab-switcher
+>
+	<div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
+	<div
+		role="tablist"
+		aria-label={label}
+		aria-orientation="vertical"
+		class="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:min-w-[180px] sm:pt-[39px]"
+	>
+		{
+			items.map((s, i) => (
+				<button
+					type="button"
+					role="tab"
+					id={`${idPrefix}-tab-${s.id}`}
+					aria-controls={`${idPrefix}-panel-${s.id}`}
+					aria-selected={i === 0 ? "true" : "false"}
+					tabindex={i === 0 ? 0 : -1}
+					class="solution-tab flex w-full cursor-pointer items-center justify-between gap-4 whitespace-nowrap rounded-[12px] px-[14px] py-[10px] text-left font-space-grotesk text-base"
+				>
+					<span>{s.label}</span>
+					<span class="solution-caret relative size-4 shrink-0" aria-hidden="true">
+						<img src="/images/work/eduseek/icons/caret-right-inactive.svg" alt="" width="16" height="16" class="caret-inactive absolute inset-0" />
+						<img src="/images/work/eduseek/icons/caret-right-active.svg" alt="" width="16" height="16" class="caret-active absolute inset-0" />
+					</span>
+				</button>
+			))
+		}
+	</div>
+
+	<div class="grid min-w-0 flex-1">
+	{
+		items.map((s, i) => (
+			<div
+				role="tabpanel"
+				id={`${idPrefix}-panel-${s.id}`}
+				aria-labelledby={`${idPrefix}-tab-${s.id}`}
+				data-active={i === 0 ? "true" : "false"}
+				class="solution-panel col-start-1 row-start-1 flex min-w-0 flex-col items-start gap-4"
+			>
+				<span class="rounded-[12px] bg-[#531ac7] px-[14px] py-1 font-space-grotesk text-base font-bold text-[#f3f1f1]">
+					{s.tag}
+				</span>
+				<h3 class:list={["font-space-grotesk text-2xl font-bold", tone === "dark" ? "text-[#ffffff]" : "text-[#1a1a1a]"]}>
+					{s.heading}
+				</h3>
+				{s.body && (
+					<p class:list={["font-space-grotesk text-base", tone === "dark" ? "text-[#e8e7e3]" : "text-[#1a1a1a]"]}>
+						{s.body}
+					</p>
+				)}
+				{s.image && (
+					<img
+						src={s.image.src}
+						alt={s.image.alt}
+						class="w-full self-center rounded-[4px]"
+						style={`max-width: ${s.image.maxWidth}px`}
+					/>
+				)}
+				{s.stat && (
+					<div class="flex flex-col gap-1">
+						<p class:list={["font-space-grotesk text-2xl font-bold", tone === "dark" ? "text-[#e8e7e3]" : "text-[#1a1a1a]"]}>
+							{s.stat}
+						</p>
+						<p class:list={["font-space-grotesk text-base", tone === "dark" ? "text-[#d4d2cc]" : "text-[#1a1a1a]"]}>
+							{s.statLabel}
+						</p>
+					</div>
+				)}
+			</div>
+		))
+	}
+	</div>
+	</div>
+	{/* Optional section-wide content below the switcher, not tied to any button. */}
+	{Astro.slots.has("footer") && <slot name="footer" />}
+</div>
+
+<style>
+	/* Nav button variants from Figma node 861:285: Active / hover / Inactive.
+	   Accent is EduSeek's product purple (#531ac7), not the site-wide #0052cc;
+	   hover is a light tint of it in place of Figma's light-blue hover. */
+	.solution-tab {
+		background-color: #f3f1f1;
+		color: #1a1a1a;
+		transition:
+			background-color 200ms ease-out,
+			color 200ms ease-out;
+	}
+	.solution-tab:hover {
+		background-color: #c3afeb;
+		color: #f3f1f1;
+	}
+	.solution-tab[aria-selected="true"] {
+		background-color: #531ac7;
+		color: #f3f1f1;
+		font-weight: 700;
+	}
+	.solution-tab:focus-visible {
+		outline: 2px solid #531ac7;
+		outline-offset: 2px;
+	}
+
+	.caret-inactive {
+		opacity: 0.6;
+	}
+	.caret-active {
+		opacity: 0;
+	}
+	.solution-tab:hover .caret-inactive,
+	.solution-tab[aria-selected="true"] .caret-inactive {
+		opacity: 0;
+	}
+	.solution-tab:hover .caret-active,
+	.solution-tab[aria-selected="true"] .caret-active {
+		opacity: 1;
+	}
+
+	/* All panels share one grid cell, so the box is always as tall as the longest
+	   (Navigation) and doesn't resize when switching. Inactive panels keep their
+	   space but are invisible and hidden from assistive tech. */
+	.solution-panel[data-active="false"] {
+		visibility: hidden;
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-tab-switcher]").forEach((root) => {
+		const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+		const panels = Array.from(root.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+
+		const select = (index: number, focus = false) => {
+			tabs.forEach((tab, i) => {
+				const active = i === index;
+				tab.setAttribute("aria-selected", String(active));
+				tab.tabIndex = active ? 0 : -1;
+				panels[i].dataset.active = String(active);
+			});
+			if (focus) tabs[index].focus();
+		};
+
+		tabs.forEach((tab, i) => {
+			tab.addEventListener("click", () => select(i));
+			tab.addEventListener("keydown", (e) => {
+				const keys: Record<string, number> = {
+					ArrowDown: (i + 1) % tabs.length,
+					ArrowRight: (i + 1) % tabs.length,
+					ArrowUp: (i - 1 + tabs.length) % tabs.length,
+					ArrowLeft: (i - 1 + tabs.length) % tabs.length,
+					Home: 0,
+					End: tabs.length - 1,
+				};
+				if (e.key in keys) {
+					e.preventDefault();
+					select(keys[e.key], true);
+				}
+			});
+		});
+	});
+</script>

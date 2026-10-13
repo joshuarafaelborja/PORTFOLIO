@@ -1,0 +1,49 @@
+---
+// Stat highlight: a value with a label under it. Type, size and spacing from Figma
+// node 932:2013 (value 24px bold, label 16px regular, 4px gap, 16px padding).
+// Generic, so any case study can use it, alone or in a StatStrip.
+//
+// An arrow in the value ("8+ → 4") is hidden from screen readers and replaced with
+// visually hidden "to", so it reads "8+ to 4". The value never wraps.
+
+interface Props {
+	value: string;
+	label: string;
+	/** "light" for cream sections, "dark" for dark stages. */
+	tone?: "light" | "dark";
+}
+
+const { value, label, tone = "light" } = Astro.props;
+const parts = value.split("→");
+---
+
+<div class="flex flex-col items-start gap-1 p-4 text-left">
+	<p
+		class:list={[
+			"font-space-grotesk text-2xl leading-[normal] font-bold whitespace-nowrap",
+			tone === "dark" ? "text-[#ffffff]" : "text-[#1a1a1a]",
+		]}
+	>
+		{
+			parts.map((part, i) =>
+				i === 0 ? (
+					part
+				) : (
+					<Fragment>
+						<span aria-hidden="true">→</span>
+						<span class="sr-only">to</span>
+						{part}
+					</Fragment>
+				),
+			)
+		}
+	</p>
+	<p
+		class:list={[
+			"font-space-grotesk text-base leading-[normal]",
+			tone === "dark" ? "text-[#e8e7e3]" : "text-[#1a1a1a]",
+		]}
+	>
+		{label}
+	</p>
+</div>

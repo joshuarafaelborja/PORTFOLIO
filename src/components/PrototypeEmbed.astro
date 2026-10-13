@@ -1,0 +1,131 @@
+---
+// Embeds a full-screen prototype (e.g. the EduSeek Magic Patterns session replay) at
+// its native desktop size and scales it down to fit the frame, so its own responsive
+// breakpoints never kick in. The Magic Patterns build compresses below ~1240px wide
+// (header and date label wrap), so it's rendered at 1280 x 800 and scaled.
+//
+// - Container wider than 640px: iframe at nativeWidth x nativeHeight, scaled with
+//   transform: scale(containerWidth / nativeWidth) from the top left (set by a
+//   ResizeObserver). The viewport box's height comes from aspect-ratio, so it's right
+//   before the script runs and nothing shifts on load. Clicks and scrolling still
+//   map correctly through the transform.
+// - 640px or narrower: the prototype is broken at phone widths even standalone, so a
+//   "best viewed on a larger screen" note with an open-in-new-tab button shows
+//   instead (container query; the hidden lazy iframe never loads).
+
+interface Props {
+	src: string;
+	title: string;
+	nativeWidth?: number;
+	nativeHeight?: number;
+}
+
+const { src, title, nativeWidth = 1280, nativeHeight = 800 } = Astro.props;
+---
+
+<div class="proto-embed flex w-full flex-col gap-3" data-proto-embed data-native-width={nativeWidth}>
+	<!-- Same dark frame as the other interactive frames. -->
+	<div class="proto-frame w-full bg-[#1e1e1e] px-4 py-12 lg:py-16">
+		<div class="proto-viewport" style={`aspect-ratio: ${nativeWidth} / ${nativeHeight}`} data-proto-viewport>
+			<div class="proto-placeholder font-space-grotesk text-sm text-[#d4d2cc]" aria-hidden="true">
+				Loading prototype…
+			</div>
+			<iframe
+				src={src}
+				title={title}
+				loading="lazy"
+				width={nativeWidth}
+				height={nativeHeight}
+				style={`width: ${nativeWidth}px; height: ${nativeHeight}px`}
+				data-proto-iframe></iframe>
+		</div>
+
+		<div class="proto-mobile flex-col items-center gap-4 py-8 text-center">
+			<p class="font-space-grotesk text-base text-[#e8e7e3]">Best viewed on a larger screen</p>
+			<a
+				href={src}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="proto-mobile-btn rounded-[12px] bg-[#531ac7] p-3 font-space-grotesk text-base font-bold text-[#f3f1f1]"
+			>
+				Open prototype in new tab
+			</a>
+		</div>
+	</div>
+
+	<a href={src} target="_blank" rel="noopener noreferrer" class="text-link w-fit font-space-grotesk text-base">
+		Open in new tab
+	</a>
+</div>
+
+<style>
+	.proto-frame {
+		container-type: inline-size;
+	}
+	.proto-viewport {
+		position: relative;
+		width: 100%;
+		overflow: hidden;
+		border-radius: 8px;
+		background: #2a2a2a;
+	}
+	.proto-viewport iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		max-width: none;
+		border: 0;
+		transform-origin: top left;
+	}
+	.proto-placeholder {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: opacity 200ms ease-out;
+	}
+	[data-proto-embed][data-loaded="true"] .proto-placeholder {
+		opacity: 0;
+	}
+	.proto-mobile {
+		display: none;
+	}
+	.proto-mobile-btn:focus-visible {
+		outline: 2px solid #c3afeb;
+		outline-offset: 2px;
+	}
+
+	/* Narrow frames: the prototype doesn't work at phone widths, so swap in the note. */
+	@container (max-width: 640px) {
+		.proto-viewport {
+			display: none;
+		}
+		.proto-mobile {
+			display: flex;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.proto-placeholder {
+			transition: none;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-proto-embed]").forEach((root) => {
+		const viewport = root.querySelector<HTMLElement>("[data-proto-viewport]")!;
+		const iframe = root.querySelector<HTMLIFrameElement>("[data-proto-iframe]")!;
+		const nativeWidth = Number(root.dataset.nativeWidth);
+
+		const fit = () => {
+			const width = viewport.clientWidth;
+			if (width > 0) iframe.style.transform = `scale(${width / nativeWidth})`;
+		};
+		new ResizeObserver(fit).observe(viewport);
+		fit();
+
+		iframe.addEventListener("load", () => (root.dataset.loaded = "true"));
+	});
+</script>

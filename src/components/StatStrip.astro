@@ -1,0 +1,37 @@
+---
+// A row of Stat highlights: equal columns across the content width with thin
+// #d4d2cc dividers between columns (not around the outside). Four across from
+// 640px up, a 2x2 grid below that. Generic, so any case study can use it.
+import Stat from "./Stat.astro";
+
+interface Props {
+	stats: { value: string; label: string }[];
+	tone?: "light" | "dark";
+	class?: string;
+}
+
+const { stats, tone = "light", class: className } = Astro.props;
+---
+
+<div class:list={["stat-strip grid w-full grid-cols-2 sm:grid-cols-4", className]}>
+	{
+		stats.map((s) => (
+			<div class="stat-strip-cell min-w-0">
+				<Stat value={s.value} label={s.label} tone={tone} />
+			</div>
+		))
+	}
+</div>
+
+<style>
+	/* 2x2: divider before the second column only. */
+	.stat-strip-cell:nth-child(even) {
+		border-left: 1px solid #d4d2cc;
+	}
+	/* One row: divider before every column but the first. */
+	@media (min-width: 640px) {
+		.stat-strip-cell + .stat-strip-cell {
+			border-left: 1px solid #d4d2cc;
+		}
+	}
+</style>
