@@ -7,6 +7,11 @@
 // The container height stays fixed to the tallest panel across all states.
 // No background of its own: the page places it on a light section or inside a dark
 // frame, and `tone` picks the matching text colors.
+//
+// variant="loop" (Loop case study, Figma 989:208 + 992:224): blue/grey tabs, the panels
+// sit in a white card with thick black bottom/right edges, a "Solution 0N" chip with a
+// star, centered copy, and an inline blue stat. Default variant output is unchanged.
+import Stat from "./Stat.astro";
 
 export interface TabItem {
 	id: string;
@@ -26,9 +31,11 @@ interface Props {
 	items: TabItem[];
 	/** "dark" = light text, for use inside a dark (#1e1e1e) frame. */
 	tone?: "light" | "dark";
+	variant?: "default" | "loop";
 }
 
-const { label, items, tone = "light" } = Astro.props;
+const { label, items, tone = "light", variant = "default" } = Astro.props;
+const loop = variant === "loop";
 // Prefix element ids so several switchers can live on one page.
 const idPrefix = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 ---
@@ -36,13 +43,14 @@ const idPrefix = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 <div
 	class="tab-switcher flex w-full flex-col gap-6 sm:gap-8"
 	data-tab-switcher
+	data-variant={loop ? "loop" : undefined}
 >
-	<div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
+	<div class:list={["flex flex-col gap-6 sm:flex-row sm:items-start", loop ? "sm:gap-[10px]" : "sm:gap-8"]}>
 	<div
 		role="tablist"
 		aria-label={label}
 		aria-orientation="vertical"
-		class="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:min-w-[180px] sm:pt-[39px]"
+		class:list={["flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:min-w-[180px]", !loop && "sm:pt-[39px]"]}
 	>
 		{
 			items.map((s, i) => (
@@ -65,7 +73,13 @@ const idPrefix = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 		}
 	</div>
 
-	<div class="grid min-w-0 flex-1">
+	<div
+		class:list={[
+			"grid min-w-0 flex-1",
+			loop &&
+				"rounded-[12px] border-t-4 border-r-[12px] border-b-[12px] border-l-4 border-black bg-white p-4 sm:min-h-[445px] sm:p-6",
+		]}
+	>
 	{
 		items.map((s, i) => (
 			<div
@@ -73,8 +87,31 @@ const idPrefix = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 				id={`${idPrefix}-panel-${s.id}`}
 				aria-labelledby={`${idPrefix}-tab-${s.id}`}
 				data-active={i === 0 ? "true" : "false"}
-				class="solution-panel col-start-1 row-start-1 flex min-w-0 flex-col items-start gap-4"
+				class:list={[
+					"solution-panel col-start-1 row-start-1 flex min-w-0 flex-col",
+					loop ? "items-center gap-8 text-center sm:gap-16" : "items-start gap-4",
+				]}
 			>
+				{loop ? (
+					<Fragment>
+						<span class="loop-chip relative flex h-10 items-center rounded-[12px] bg-[#0052cc] px-[14px] text-base text-[#fbf9ef]">
+							{s.tag}
+							<img
+								src="/images/work/loop/icons/star.svg"
+								alt=""
+								width="32"
+								height="32"
+								class="absolute top-1/2 left-full -translate-x-1.5 -translate-y-1/2 rotate-180"
+							/>
+						</span>
+						<div class="flex w-full max-w-[454px] flex-col items-center gap-3">
+							<h3 class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">{s.heading}</h3>
+							{s.body && <p class="font-space-grotesk text-base text-[#1a1a1a]">{s.body}</p>}
+						</div>
+						{s.stat && <Stat value={s.stat} label={s.statLabel ?? ""} variant="loop" />}
+					</Fragment>
+				) : (
+				<Fragment>
 				<span class="rounded-[12px] bg-[#531ac7] px-[14px] py-1 font-space-grotesk text-base font-bold text-[#f3f1f1]">
 					{s.tag}
 				</span>
@@ -103,6 +140,8 @@ const idPrefix = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 							{s.statLabel}
 						</p>
 					</div>
+				)}
+				</Fragment>
 				)}
 			</div>
 		))
@@ -136,6 +175,35 @@ const idPrefix = label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 	.solution-tab:focus-visible {
 		outline: 2px solid #531ac7;
 		outline-offset: 2px;
+	}
+
+	/* Loop variant (Figma 989:208): Loop blue #0052cc active, grey inactive,
+	   Powder (#b0dcff, from the Loop palette) hover. */
+	[data-variant="loop"] .solution-tab:hover {
+		background-color: #b0dcff;
+		color: #1a1a1a;
+	}
+	[data-variant="loop"] .solution-tab[aria-selected="true"] {
+		background-color: #0052cc;
+		color: #fbf9ef;
+	}
+	[data-variant="loop"] .solution-tab:focus-visible {
+		outline-color: #0052cc;
+	}
+	[data-variant="loop"] .solution-tab:hover:not([aria-selected="true"]) .caret-inactive {
+		opacity: 0.6;
+	}
+	[data-variant="loop"] .solution-tab:hover:not([aria-selected="true"]) .caret-active {
+		opacity: 0;
+	}
+	/* Chip type is Tilt Neon; the font itself is loaded by the Loop page. */
+	.loop-chip {
+		font-family: var(--loop-font-chip, "Space Grotesk", sans-serif);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		[data-variant="loop"] .solution-tab {
+			transition: none;
+		}
 	}
 
 	.caret-inactive {

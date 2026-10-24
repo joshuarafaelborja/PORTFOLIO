@@ -12,12 +12,14 @@ interface Props {
 	heroSrc: string;
 	heroAlt: string;
 	meta: MetaItem[];
+	/** Keep the page out of search results (drafts). */
+	noindex?: boolean;
 }
 
-const { title, heroSrc, heroAlt, meta } = Astro.props;
+const { title, heroSrc, heroAlt, meta, noindex } = Astro.props;
 ---
 
-<Layout title={`${title} — JB`}>
+<Layout title={`${title} — JB`} noindex={noindex}>
 	<CaseStudyHero title={title} heroSrc={heroSrc} heroAlt={heroAlt} meta={meta} />
 	<slot />
 </Layout>

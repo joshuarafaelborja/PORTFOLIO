@@ -1,0 +1,122 @@
+---
+// DRAFT: Loop case study. noindex, and not linked from the homepage, nav or Works page.
+// Rebuilt from Figma "loop casestudy" frame (node 807:17)
+// https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=807-17
+// All copy and image paths live in src/data/loop.ts.
+// TODO: hero image and Deliverables row aren't final in Figma; rendered as-is (see src/data/loop.ts).
+import "../../styles/loop-fonts.css";
+import { Image } from "astro:assets";
+import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
+import CaseStudySection from "../../components/CaseStudySection.astro";
+import TabSwitcher from "../../components/TabSwitcher.astro";
+import FlipToggle from "../../components/FlipToggle.astro";
+import StepCard from "../../components/StepCard.astro";
+import ImagePlaceholder from "../../components/ImagePlaceholder.astro";
+import {
+	page,
+	hero,
+	meta,
+	outcome,
+	context,
+	problem,
+	solution,
+	brand,
+	mockSteps,
+	ctas,
+	onboarding,
+	screenshotSteps,
+	delivered,
+	reflection,
+} from "../../data/loop";
+
+const text = "font-space-grotesk text-base text-[#1a1a1a]";
+const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base text-[#1a1a1a]";
+---
+
+<CaseStudyLayout title={page.title} heroSrc={hero.src} heroAlt={hero.alt} meta={meta} noindex>
+	<CaseStudySection eyebrow={outcome.eyebrow} heading={outcome.heading}>
+		<ImagePlaceholder src={outcome.image.src} alt={outcome.image.alt} name="landing-page" ratio={[960, 745]} />
+		<p class={text}>{outcome.body}</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={context.eyebrow} heading={context.heading}>
+		<p class={text}>{context.body}</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={problem.eyebrow} heading={problem.heading}>
+		<!-- Figma 987:191. Stacked below lg, three across from lg up. -->
+		<ul class="grid w-full grid-cols-1 gap-4 lg:grid-cols-3">
+			{
+				problem.pills.map((p) => (
+					<li class="loop-pill flex min-h-[124px] flex-col items-center justify-center gap-4 px-8 py-6 text-center">
+						<h3 class="loop-pill-heading">{p.heading}</h3>
+						<p class={text}>{p.body}</p>
+					</li>
+				))
+			}
+		</ul>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={solution.eyebrow} heading={solution.heading}>
+		<TabSwitcher label="Solutions" items={solution.tabs} variant="loop" />
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={brand.eyebrow} heading={brand.heading}>
+		<p class={text}>{brand.body}</p>
+		<p class="loop-pill loop-pill-heading flex min-h-[66px] w-full max-w-[435px] items-center justify-center px-8 py-3 text-center">
+			{brand.pill}
+		</p>
+		<!-- Figma 1014:2261: working step card (mock mode) + brand components image. Side by side from lg up. -->
+		<div class="flex w-full flex-col items-center gap-9 lg:flex-row lg:items-start">
+			<StepCard label="Onboarding flow preview" steps={mockSteps} mode="mock" class="lg:flex-1" />
+			<Image
+				src={brand.card.src}
+				alt={brand.card.alt}
+				widths={[384, 768]}
+				sizes="384px"
+				class="h-auto w-full max-w-[384px] shrink-0"
+			/>
+		</div>
+		<p class={text}>{brand.note}</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={ctas.eyebrow} heading={ctas.heading}>
+		<ul class={bullets}>{ctas.bullets.map((b) => <li>{b}</li>)}</ul>
+		<FlipToggle states={ctas.toggle} variant="loop" />
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={onboarding.eyebrow} heading={onboarding.heading}>
+		<ul class={bullets}>{onboarding.bullets.map((b) => <li>{b}</li>)}</ul>
+		<StepCard label="Onboarding flow screens" steps={screenshotSteps} mode="screenshot" class="mx-auto max-w-[720px]" />
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={delivered.eyebrow} heading={delivered.heading}>
+		<p class={text}>{delivered.body}</p>
+	</CaseStudySection>
+
+	<CaseStudySection eyebrow={reflection.eyebrow} heading={reflection.heading}>
+		<div class="flex flex-col gap-2">
+			<ul class={bullets}>{reflection.bullets.map((b) => <li>{b}</li>)}</ul>
+			<p class={text}>{reflection.body}</p>
+		</div>
+	</CaseStudySection>
+</CaseStudyLayout>
+
+<style>
+	/* Lime pill from Figma (986:164 / 1014:2298): Energy fill, heavy black
+	   bottom/right edge. */
+	.loop-pill {
+		background-color: #d3ff6c;
+		border: solid #000;
+		border-width: 4px 16px 12px 4px;
+		border-radius: 75px;
+	}
+	/* Heading font is one variable in src/styles/loop-fonts.css (--loop-pill-font). */
+	.loop-pill-heading {
+		font-family: var(--loop-pill-font);
+		font-size: 16px;
+		font-weight: 700;
+		line-height: normal;
+		color: #070707;
+	}
+</style>

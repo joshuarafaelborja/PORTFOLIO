@@ -8,13 +8,24 @@
 // Both states are stacked in one grid cell, so the stage is always as tall as the
 // taller state: the button never moves and the height never jumps on swap. The
 // shorter state's content is centered vertically in that space.
+//
+// An empty image.src renders a dashed "Screenshot: <placeholder>" box at the image's
+// aspect ratio instead. variant="loop" swaps the EduSeek purple button for Loop blue.
+import ImagePlaceholder from "./ImagePlaceholder.astro";
 
 export interface FlipState {
 	id: string;
 	/** Button label while this state is showing, e.g. "Pain Point 1". */
 	label: string;
 	/** width/height are the display size in px (also caps the width) and reserve the aspect ratio. */
-	image: { src: string; alt: string; width: number; height: number };
+	image: {
+		src: string;
+		alt: string;
+		width: number;
+		height: number;
+		/** Name shown while src is empty, e.g. "cta-first". */
+		placeholder?: string;
+	};
 	/** Optional line under the image, e.g. "Teachers were clicking blind". */
 	title?: string;
 	body: string;
@@ -27,9 +38,10 @@ export interface FlipState {
 interface Props {
 	/** Exactly two states: [shown on load, shown after click]. */
 	states: [FlipState, FlipState];
+	variant?: "default" | "loop";
 }
 
-const { states } = Astro.props;
+const { states, variant = "default" } = Astro.props;
 const [first, second] = states;
 // Default caption width: as wide as the image, up to this (and never wider than the stage).
 const CAPTION_MAX = 560;
@@ -38,6 +50,7 @@ const CAPTION_MAX = 560;
 <div
 	class="flex min-h-[480px] w-full flex-col items-center justify-center gap-6 bg-[#1e1e1e] px-4 pt-24 pb-12 sm:pt-12 lg:py-16"
 	data-flip-toggle
+	data-variant={variant === "loop" ? "loop" : undefined}
 	data-label-a={first.label}
 	data-label-b={second.label}
 >
@@ -102,14 +115,26 @@ const CAPTION_MAX = 560;
 					aria-hidden={i === 0 ? undefined : "true"}
 					inert={i !== 0}
 				>
-					<img
-						src={s.image.src}
-						alt={s.image.alt}
-						width={s.image.width}
-						height={s.image.height}
-						class="h-auto w-full max-w-full"
-						style={`max-width: ${s.image.width}px`}
-					/>
+					{s.image.src ? (
+						<img
+							src={s.image.src}
+							alt={s.image.alt}
+							width={s.image.width}
+							height={s.image.height}
+							class="h-auto w-full max-w-full"
+							style={`max-width: ${s.image.width}px`}
+						/>
+					) : (
+						<div class="w-full" style={`max-width: ${s.image.width}px`}>
+							<ImagePlaceholder
+								src=""
+								alt={s.image.alt}
+								name={s.image.placeholder ?? s.id}
+								ratio={[s.image.width, s.image.height]}
+								tone="dark"
+							/>
+						</div>
+					)}
 					{s.title && (
 						<p
 							class:list={[
@@ -159,6 +184,21 @@ const CAPTION_MAX = 560;
 	}
 	.flip-icon {
 		transition: transform 250ms ease-out;
+	}
+	/* Loop variant: Loop blue (#0052cc), Powder (#b0dcff) focus ring. */
+	[data-variant="loop"] .flip-btn {
+		background-color: #0052cc;
+	}
+	[data-variant="loop"] .flip-btn:hover {
+		background-color: #1f66d6;
+		box-shadow: 0 8px 18px -8px rgba(0, 82, 204, 0.8);
+	}
+	[data-variant="loop"] .flip-btn:active {
+		background-color: #003d99;
+		box-shadow: none;
+	}
+	[data-variant="loop"] .flip-btn:focus-visible {
+		outline-color: #b0dcff;
 	}
 	[data-flip-toggle][data-state="b"] .flip-icon {
 		transform: rotate(180deg);

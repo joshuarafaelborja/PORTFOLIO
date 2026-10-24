@@ -1,0 +1,51 @@
+---
+// Image slot that holds its aspect ratio whether or not the real image exists yet.
+// Empty `src` → dashed box labelled "Screenshot: <name>" at the final aspect ratio,
+// so layout doesn't shift when the real file arrives. A string src is a public/ path;
+// an imported image (src/assets) goes through astro:assets for resizing.
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+	src: ImageMetadata | string;
+	alt: string;
+	/** Short name shown in the placeholder, e.g. "cta-first". */
+	name: string;
+	/** Aspect ratio, e.g. [16, 7]. */
+	ratio: [number, number];
+	/** "dark" = light dashes/text, for use on a dark (#1e1e1e) stage. */
+	tone?: "light" | "dark";
+	class?: string;
+}
+
+const { src, alt, name, ratio, tone = "light", class: className } = Astro.props;
+const aspect = `aspect-ratio: ${ratio[0]} / ${ratio[1]}`;
+---
+
+{
+	!src ? (
+		<div
+			role="img"
+			aria-label={`Placeholder: ${alt}`}
+			class:list={[
+				"flex w-full items-center justify-center rounded-[4px] border-2 border-dashed p-4 text-center font-space-grotesk text-base",
+				tone === "dark" ? "border-[#d4d2cc] text-[#d4d2cc]" : "border-[#8a8780] bg-[#f3f1f1] text-[#4a4a4a]",
+				className,
+			]}
+			style={aspect}
+		>
+			{`Screenshot: ${name}`}
+		</div>
+	) : typeof src === "string" ? (
+		<img src={src} alt={alt} class:list={["w-full rounded-[4px] object-cover", className]} style={aspect} />
+	) : (
+		<Image
+			src={src}
+			alt={alt}
+			widths={[src.width / 2, src.width]}
+			sizes="(min-width: 1056px) 960px, 100vw"
+			class:list={["h-auto w-full rounded-[4px] object-cover", className]}
+			style={aspect}
+		/>
+	)
+}
