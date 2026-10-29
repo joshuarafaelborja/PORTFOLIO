@@ -3,15 +3,15 @@
 // Rebuilt from Figma "loop casestudy" frame (node 807:17)
 // https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=807-17
 // All copy and image paths live in src/data/loop.ts.
-// TODO: hero image and Deliverables row aren't final in Figma; rendered as-is (see src/data/loop.ts).
+// TODO: hero is a placeholder until the real Loop hero is ready (see src/data/loop.ts).
 import "../../styles/loop-fonts.css";
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import CaseStudyLayout from "../../layouts/CaseStudyLayout.astro";
 import CaseStudySection from "../../components/CaseStudySection.astro";
 import TabSwitcher from "../../components/TabSwitcher.astro";
-import FlipToggle from "../../components/FlipToggle.astro";
-import StepCard from "../../components/StepCard.astro";
 import ImagePlaceholder from "../../components/ImagePlaceholder.astro";
+import CallBrief from "../../components/CallBrief.astro";
+import OnboardingFlow from "../../components/OnboardingFlow.astro";
 import {
 	page,
 	hero,
@@ -21,13 +21,16 @@ import {
 	problem,
 	solution,
 	brand,
-	mockSteps,
 	ctas,
 	onboarding,
-	screenshotSteps,
+	onboardingFlow,
 	delivered,
+	rebuild,
 	reflection,
 } from "../../data/loop";
+
+// Poster as webp at the recording's full width (the source png is 1.2 MB).
+const poster = (await getImage({ src: outcome.video.poster, format: "webp" })).src;
 
 const text = "font-space-grotesk text-base text-[#1a1a1a]";
 const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base text-[#1a1a1a]";
@@ -35,7 +38,52 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 
 <CaseStudyLayout title={page.title} heroSrc={hero.src} heroAlt={hero.alt} meta={meta} noindex>
 	<CaseStudySection eyebrow={outcome.eyebrow} heading={outcome.heading}>
-		<ImagePlaceholder src={outcome.image.src} alt={outcome.image.alt} name="landing-page" ratio={[960, 745]} />
+		<!-- Landing page scroll recording. Autoplays muted on loop; with reduced motion it
+		     stays on the poster and shows a Play/Pause button instead. -->
+		<div class="relative w-full">
+			<video
+				autoplay
+				muted
+				loop
+				playsinline
+				preload="metadata"
+				poster={poster}
+				width={outcome.video.poster.width}
+				height={outcome.video.poster.height}
+				aria-label={outcome.video.label}
+				class="block h-auto w-full rounded-[4px] border border-[#d4d2cc]"
+			>
+				<source src={outcome.video.src} type="video/mp4" />
+			</video>
+			<button
+				type="button"
+				hidden
+				data-play={outcome.video.play}
+				data-pause={outcome.video.pause}
+				class="absolute bottom-3 left-3 rounded-[4px] bg-[#1a1a1a] px-3 py-1 font-space-grotesk text-base text-white focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#1a1a1a]"
+			>
+				{outcome.video.play}
+			</button>
+			<!-- Inline and right after the video, so it runs before autoplay starts. -->
+			<script is:inline>
+				(() => {
+					if (!matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+					const wrap = document.currentScript.parentElement;
+					const video = wrap.querySelector("video");
+					const button = wrap.querySelector("button");
+					video.autoplay = false;
+					video.removeAttribute("autoplay");
+					video.pause();
+					button.hidden = false;
+					button.addEventListener("click", () => {
+						if (video.paused) video.play();
+						else video.pause();
+					});
+					video.addEventListener("play", () => (button.textContent = button.dataset.pause));
+					video.addEventListener("pause", () => (button.textContent = button.dataset.play));
+				})();
+			</script>
+		</div>
 		<p class={text}>{outcome.body}</p>
 	</CaseStudySection>
 
@@ -63,12 +111,12 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 
 	<CaseStudySection eyebrow={brand.eyebrow} heading={brand.heading}>
 		<p class={text}>{brand.body}</p>
-		<p class="loop-pill loop-pill-heading flex min-h-[66px] w-full max-w-[435px] items-center justify-center px-8 py-3 text-center">
-			{brand.pill}
-		</p>
-		<!-- Figma 1014:2261: working step card (mock mode) + brand components image. Side by side from lg up. -->
-		<div class="flex w-full flex-col items-center gap-9 lg:flex-row lg:items-start">
-			<StepCard label="Onboarding flow preview" steps={mockSteps} mode="mock" class="lg:flex-1" />
+		<!-- Wordmark versions (Figma 957:1707) + brand components image. Side by side from lg up,
+		     ending at the same height (the right image has its shadow baked in; mb-2 matches it). -->
+		<div class="flex w-full flex-col items-center gap-9 lg:flex-row lg:items-stretch">
+			<div class="loop-card flex w-full items-center justify-center p-6 lg:mb-2 lg:flex-1">
+				<Image src={brand.wordmarks.src} alt={brand.wordmarks.alt} class="h-auto w-full max-w-[480px]" />
+			</div>
 			<Image
 				src={brand.card.src}
 				alt={brand.card.alt}
@@ -81,22 +129,83 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow={ctas.eyebrow} heading={ctas.heading}>
-		<ul class={bullets}>{ctas.bullets.map((b) => <li>{b}</li>)}</ul>
-		<FlipToggle states={ctas.toggle} variant="loop" />
+		<ul class={bullets}>
+			{
+				ctas.fixes.map((f) => (
+					<li>
+						<p><strong>{f.lead}</strong> {f.body}</p>
+						<!-- Before/After side by side from 640px; flex-grow follows each image's aspect
+						     ratio so both images end up the same height. -->
+						<div class="mt-4 mb-4 flex flex-col gap-4 sm:flex-row">
+							{[
+								{ label: ctas.beforeLabel, img: f.before },
+								{ label: ctas.afterLabel, img: f.after },
+							].map(({ label, img }) => (
+								<figure
+									class="flex min-w-0 flex-col gap-2"
+									style={`flex: ${img.src.width / img.src.height} 1 0%`}
+								>
+									<figcaption class="font-space-grotesk text-base text-[#1a1a1a]">{label}</figcaption>
+									<Image
+										src={img.src}
+										alt={img.alt}
+										widths={[img.src.width / 2, img.src.width]}
+										sizes="(min-width: 1056px) 560px, 100vw"
+										class="h-auto w-full rounded-[4px] border border-[#d4d2cc]"
+									/>
+								</figure>
+							))}
+						</div>
+					</li>
+				))
+			}
+		</ul>
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow={onboarding.eyebrow} heading={onboarding.heading}>
 		<ul class={bullets}>{onboarding.bullets.map((b) => <li>{b}</li>)}</ul>
-		<StepCard label="Onboarding flow screens" steps={screenshotSteps} mode="screenshot" class="mx-auto max-w-[720px]" />
+		<OnboardingFlow copy={onboardingFlow} />
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow={delivered.eyebrow} heading={delivered.heading}>
 		<p class={text}>{delivered.body}</p>
 	</CaseStudySection>
 
+	<CaseStudySection eyebrow={rebuild.eyebrow} heading={rebuild.heading}>
+		<p class={text}>{rebuild.intro}</p>
+		<ul class={bullets}>
+			<li>
+				<p><strong>{rebuild.accessibility.lead}</strong> {rebuild.accessibility.body}</p>
+				<ImagePlaceholder
+					src={rebuild.accessibility.image.src}
+					alt={rebuild.accessibility.image.alt}
+					name={rebuild.accessibility.image.placeholder}
+					ratio={[16, 10]}
+					class="mt-4 mb-4"
+				/>
+			</li>
+			<li>
+				<p><strong>{rebuild.ai.lead}</strong> {rebuild.ai.body}</p>
+				<CallBrief {...rebuild.callBrief} class="mt-4" />
+			</li>
+		</ul>
+	</CaseStudySection>
+
 	<CaseStudySection eyebrow={reflection.eyebrow} heading={reflection.heading}>
 		<div class="flex flex-col gap-2">
-			<ul class={bullets}>{reflection.bullets.map((b) => <li>{b}</li>)}</ul>
+			<ul class={bullets}>
+				{
+					reflection.bullets.map((b) =>
+						typeof b === "string" ? (
+							<li>{b}</li>
+						) : (
+							<li>
+								<strong>{b.lead}</strong> {b.body}
+							</li>
+						),
+					)
+				}
+			</ul>
 			<p class={text}>{reflection.body}</p>
 		</div>
 	</CaseStudySection>
@@ -105,6 +214,13 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 <style>
 	/* Lime pill from Figma (986:164 / 1014:2298): Energy fill, heavy black
 	   bottom/right edge. */
+	/* White card, Royale border and Royale offset shadow (Brand section). */
+	.loop-card {
+		background-color: #fff;
+		border: 4px solid #145dd7;
+		border-radius: 16px;
+		box-shadow: 8px 8px 0 0 #145dd7;
+	}
 	.loop-pill {
 		background-color: #d3ff6c;
 		border: solid #000;

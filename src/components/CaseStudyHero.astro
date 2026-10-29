@@ -1,4 +1,6 @@
 ---
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+
 interface MetaItem {
 	label: string;
 	value: string;
@@ -8,17 +10,25 @@ interface Props {
 	title: string;
 	heroSrc: string;
 	heroAlt: string;
+	/** Placeholder label used when heroSrc is empty ("Screenshot: <name>"). */
+	heroPlaceholder?: string;
 	meta: MetaItem[];
 }
 
-const { title, heroSrc, heroAlt, meta } = Astro.props;
+const { title, heroSrc, heroAlt, heroPlaceholder = "hero", meta } = Astro.props;
 ---
 
 <section class="flex flex-col gap-4 border-b border-[#d4d2cc] pb-8">
 	<h1 class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">{title}</h1>
-	<div class="aspect-[960/479] w-full overflow-hidden rounded-[4px] bg-[#1a1a1a]">
-		<img src={heroSrc} alt={heroAlt} class="h-full w-full object-cover" />
-	</div>
+	{
+		heroSrc ? (
+			<div class="aspect-[960/479] w-full overflow-hidden rounded-[4px] bg-[#1a1a1a]">
+				<img src={heroSrc} alt={heroAlt} class="h-full w-full object-cover" />
+			</div>
+		) : (
+			<ImagePlaceholder src="" alt={heroAlt} name={heroPlaceholder} ratio={[960, 479]} />
+		)
+	}
 	<div class="flex flex-wrap gap-4">
 		{
 			meta.map((item) => (
