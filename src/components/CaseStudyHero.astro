@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
 import ImagePlaceholder from "./ImagePlaceholder.astro";
 
 interface MetaItem {
@@ -8,7 +10,8 @@ interface MetaItem {
 
 interface Props {
 	title: string;
-	heroSrc: string;
+	/** A public/ path, or an imported image (rendered with astro:assets at its own ratio). */
+	heroSrc: ImageMetadata | string;
 	heroAlt: string;
 	/** Placeholder label used when heroSrc is empty ("Screenshot: <name>"). */
 	heroPlaceholder?: string;
@@ -21,7 +24,16 @@ const { title, heroSrc, heroAlt, heroPlaceholder = "hero", meta } = Astro.props;
 <section class="flex flex-col gap-4 border-b border-[#d4d2cc] pb-8">
 	<h1 class="font-space-grotesk text-2xl font-bold text-[#1a1a1a]">{title}</h1>
 	{
-		heroSrc ? (
+		typeof heroSrc === "object" ? (
+			<Image
+				src={heroSrc}
+				alt={heroAlt}
+				widths={[960, 1920]}
+				sizes="(min-width: 1056px) 960px, 100vw"
+				loading="eager"
+				class="h-auto w-full rounded-[4px] border border-[#d4d2cc]"
+			/>
+		) : heroSrc ? (
 			<div class="aspect-[960/479] w-full overflow-hidden rounded-[4px] bg-[#1a1a1a]">
 				<img src={heroSrc} alt={heroAlt} class="h-full w-full object-cover" />
 			</div>

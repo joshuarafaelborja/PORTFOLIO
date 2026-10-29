@@ -14,6 +14,7 @@ import type { CallBriefData } from "../components/CallBrief.astro";
 import type { OnboardingCopy } from "../components/OnboardingFlow.astro";
 import landingScroll from "../assets/work/loop/2026-10-28-loop-landing-scroll-cropped.mp4?url";
 import landingScrollPoster from "../assets/work/loop/2026-10-28-loop-landing-scroll-cropped-poster.png";
+import heroImage from "../assets/work/loop/2026-10-28-loop-hero.png";
 import brandCard from "../assets/work/loop/brand-card.png";
 import wordmarkVersions from "../assets/work/loop/wordmark-versions.svg";
 import headerBefore from "../assets/work/loop/cta-header-before.png";
@@ -25,11 +26,10 @@ export const page = {
 	title: "Loop",
 };
 
-// TODO: real Loop hero still to come. Empty src renders a dashed "Screenshot: hero"
-// box at the hero's size (the Figma hero, 807:26, is a Coach screenshot).
+// Hero: Figma 860:136 ("loop box thing"), exported at 2x (5168 x 2807).
 export const hero = {
-	src: "",
-	alt: "Loop case study hero",
+	src: heroImage,
+	alt: "Loop wordmark with the letter o repeated around it, suggesting a loop",
 };
 
 export const meta = [
