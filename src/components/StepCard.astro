@@ -1,0 +1,220 @@
+---
+// Multi-step onboarding card from the Loop case study (Figma 1014:2402).
+// https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=1014-2402
+//
+// The last item in `steps` is the final screen; the others are numbered
+// ("Step N of 5") with one progress segment each. Back is hidden on step 1; on the
+// final screen Next reads "Book a call" and does nothing (it's a demo).
+//
+// mode="mock": the content slot is a placeholder field styled as in Figma
+// (an input, a dropdown, or a one-line confirmation).
+// mode="screenshot": the content slot is one 16:10 image per step.
+//
+// Nothing jumps between steps: the title is one line, the content box has a
+// fixed size (fixed card height in mock mode, a fixed aspect ratio in screenshot
+// mode), and Back keeps its space while hidden.
+import type { ImageMetadata } from "astro";
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+
+export interface Step {
+	title: string;
+	/** mock mode */
+	field?: { kind: "input" | "select" | "confirm"; text: string };
+	/** screenshot mode; empty src renders a "Screenshot: <placeholder>" box. */
+	image?: { src: ImageMetadata | string; alt: string; placeholder: string };
+}
+
+interface Props {
+	/** Accessible name for the card, e.g. "Onboarding flow, step by step". */
+	label: string;
+	steps: Step[];
+	mode: "mock" | "screenshot";
+	class?: string;
+}
+
+const { label, steps, mode, class: className } = Astro.props;
+const numbered = steps.length - 1;
+const stepLabel = (i: number) => (i < numbered ? `Step ${i + 1} of ${numbered}` : "Final screen");
+---
+
+<div
+	role="group"
+	aria-label={label}
+	class:list={[
+		"step-card flex w-full min-w-0 flex-col gap-6 overflow-hidden rounded-[12px] border-t-4 border-r-[12px] border-b-[12px] border-l-4 border-black bg-white p-4 sm:p-6",
+		mode === "mock" && "h-[445px]",
+		className,
+	]}
+	data-step-card
+	data-labels={JSON.stringify(steps.map((_, i) => stepLabel(i)))}
+	data-titles={JSON.stringify(steps.map((s) => s.title))}
+>
+	<div class="flex flex-col gap-6" aria-live="polite" aria-atomic="true">
+		<h3 class="step-title truncate text-[20px] leading-[normal] font-bold text-[#1a1a1a] sm:text-2xl" data-step-title>
+			{steps[0].title}
+		</h3>
+		<p class="step-text text-[14px] leading-[normal] text-[#070707]" data-step-label>{stepLabel(0)}</p>
+	</div>
+
+	<div class="flex gap-3" aria-hidden="true">
+		{
+			Array.from({ length: numbered }, (_, i) => (
+				<span class="step-segment h-3 max-w-[72px] flex-1 rounded-[12px]" data-filled={i === 0 ? "true" : "false"} />
+			))
+		}
+	</div>
+
+	<div
+		class:list={["min-h-0", mode === "mock" ? "flex-1" : "w-full"]}
+		style={mode === "screenshot" ? "aspect-ratio: 16 / 10" : undefined}
+		aria-live="polite"
+		data-step-content
+	>
+		{
+			steps.map((s, i) => (
+				<div class="h-full w-full" hidden={i !== 0} data-step-panel>
+					{mode === "mock" && s.field?.kind === "confirm" && (
+						<p class="step-text text-base text-[#1a1a1a]">{s.field.text}</p>
+					)}
+					{mode === "mock" && s.field && s.field.kind !== "confirm" && (
+						<div class="step-field flex h-[66px] w-full items-center justify-between gap-3 rounded-[75px] px-6 sm:px-8">
+							<span>{s.field.text}</span>
+							{s.field.kind === "select" && (
+								<svg
+									width="16"
+									height="16"
+									viewBox="0 0 16 16"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2.5"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									aria-hidden="true"
+									class="shrink-0"
+								>
+									<path d="M3 6l5 5 5-5" />
+								</svg>
+							)}
+						</div>
+					)}
+					{mode === "screenshot" && s.image && (
+						<ImagePlaceholder src={s.image.src} alt={s.image.alt} name={s.image.placeholder} ratio={[16, 10]} />
+					)}
+				</div>
+			))
+		}
+	</div>
+
+	<div class="mt-auto flex items-center justify-between gap-4">
+		<button type="button" class="step-btn" data-step-back data-concealed>Back</button>
+		<button type="button" class="step-btn" data-step-next>Next</button>
+	</div>
+</div>
+
+<style>
+	/* Type: Poppins (title, label, confirmation), Anton (field, buttons).
+	   Fonts are loaded by the Loop page; these fall back cleanly elsewhere. */
+	.step-title,
+	.step-text {
+		font-family: var(--loop-font-text, "Poppins", system-ui, sans-serif);
+	}
+	.step-field,
+	.step-btn {
+		font-family: var(--loop-font-display, "Anton", Impact, sans-serif);
+		font-size: 16px;
+		line-height: normal;
+		color: #145dd7;
+		background-color: #b0dcff;
+		border: solid #145dd7;
+		border-width: 4px 8px 8px 4px;
+	}
+
+	/* Progress segments: Royale when reached, Powder ahead. */
+	.step-segment {
+		background-color: #b0dcff;
+		transition: background-color 200ms ease-out;
+	}
+	.step-segment[data-filled="true"] {
+		background-color: #145dd7;
+	}
+
+	/* Back / Next: 64px squares from Figma; "Book a call" grows to fit. */
+	.step-btn {
+		min-width: 64px;
+		height: 64px;
+		padding: 0 12px;
+		border-radius: 12px;
+		white-space: nowrap;
+		cursor: pointer;
+		transition:
+			transform 200ms ease-out,
+			background-color 200ms ease-out;
+	}
+	.step-btn:hover {
+		background-color: #d4ecff;
+		transform: translateY(-2px);
+	}
+	.step-btn:active {
+		transform: translateY(1px);
+		transition-duration: 60ms;
+	}
+	.step-btn:focus-visible {
+		outline: 3px solid #1a1a1a;
+		outline-offset: 3px;
+	}
+	/* Hidden on step 1 but still takes its space, so Next never moves.
+	   visibility also drops it from the tab order and the accessibility tree. */
+	.step-btn[data-concealed] {
+		visibility: hidden;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.step-segment,
+		.step-btn {
+			transition: none;
+		}
+		.step-btn:hover,
+		.step-btn:active {
+			transform: none;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-step-card]").forEach((root) => {
+		const labels: string[] = JSON.parse(root.dataset.labels!);
+		const titles: string[] = JSON.parse(root.dataset.titles!);
+		const title = root.querySelector<HTMLElement>("[data-step-title]")!;
+		const label = root.querySelector<HTMLElement>("[data-step-label]")!;
+		const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-step-panel]"));
+		const segments = Array.from(root.querySelectorAll<HTMLElement>(".step-segment"));
+		const back = root.querySelector<HTMLButtonElement>("[data-step-back]")!;
+		const next = root.querySelector<HTMLButtonElement>("[data-step-next]")!;
+		const last = panels.length - 1;
+		let current = 0;
+
+		const show = (index: number) => {
+			current = index;
+			title.textContent = titles[index];
+			label.textContent = labels[index];
+			panels.forEach((p, i) => (p.hidden = i !== index));
+			// Fill up to the current step; all filled on the final screen.
+			segments.forEach((s, i) => (s.dataset.filled = String(i <= index)));
+			const onFirst = index === 0;
+			// Back is about to hide: keep focus in the card instead of losing it to <body>.
+			if (onFirst && document.activeElement === back) next.focus();
+			back.toggleAttribute("data-concealed", onFirst);
+			next.textContent = index === last ? "Book a call" : "Next";
+		};
+
+		back.addEventListener("click", () => {
+			if (current > 0) show(current - 1);
+		});
+		// "Book a call" on the final screen is intentionally a no-op.
+		next.addEventListener("click", () => {
+			if (current < last) show(current + 1);
+		});
+
+		show(0);
+	});
+</script>

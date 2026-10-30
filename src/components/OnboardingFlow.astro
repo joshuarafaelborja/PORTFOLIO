@@ -1,0 +1,874 @@
+---
+// Working demo of Loop's B2B onboarding flow (Figma frames 1025:141, 167, 182, 299,
+// 197, 245, 276, each 1440 x 1024).
+// https://www.figma.com/design/2nYhgPKrVIuNd9J4G02Mae/ai-app?node-id=1025-141
+//
+// Seven screens: a company info intro, five numbered steps, and a final plan screen.
+// Nothing is sent or stored; "Schedule a call" only shows a status line.
+//
+// Sizing: every frame measurement is multiplied by --u (container width / 1440, so
+// about two thirds at 960px), with a 16px floor on text. All screens share one grid
+// cell, so the stage is always as tall as the tallest screen and nothing jumps.
+//
+// Colors are custom properties on the root (.ob) so a variant can override them.
+//
+// Type: Poppins (headings, text), Anton (pink buttons, Back/Next). Fonts are loaded by
+// the Loop page (src/styles/loop-fonts.css); these fall back cleanly elsewhere.
+import { Image } from "astro:assets";
+import wordmark from "../assets/work/loop/wordmark-primary.svg";
+import blob from "../assets/work/loop/onboarding/blob.svg";
+import thumb from "../assets/work/loop/onboarding/thumb.svg";
+import bike from "../assets/work/loop/onboarding/bike.svg";
+import bolt from "../assets/work/loop/onboarding/bolt.svg";
+import person from "../assets/work/loop/onboarding/person.svg";
+import line from "../assets/work/loop/onboarding/line.svg";
+
+type Choice = { value: string; icon?: "electric" | "manual" | "mix"; body?: string | string[] };
+
+export interface OnboardingCopy {
+	label: string;
+	hint: string;
+	close: string;
+	intro: {
+		heading: string;
+		fields: { id: string; label: string; placeholder: string }[];
+		blobText: string;
+		button: string;
+	};
+	steps: (
+		| { kind: "input"; key: string; heading: string; placeholder: string }
+		| { kind: "choice"; key: string; variant: "plain" | "bike" | "tier"; heading: string; options: Choice[] }
+	)[];
+	final: {
+		heading: string;
+		planHeading: string;
+		plan: { label: string; key: string; value: string }[];
+		schedule: string;
+		home: string;
+		status: string;
+	};
+	controls: { back: string; next: string };
+}
+
+interface Props {
+	copy: OnboardingCopy;
+	class?: string;
+}
+
+const { copy, class: className } = Astro.props;
+const total = copy.steps.length;
+const uid = "ob";
+
+// Lime fill per screen, from the frames (px of 1440). The intro has no bar.
+const fills = [0, 232, 464, 712, 1196, 1440, 1440].map((px) => `${((px / 1440) * 100).toFixed(2)}%`);
+
+const headings = [copy.intro.heading, ...copy.steps.map((s) => s.heading), copy.final.heading];
+---
+
+<div
+	class:list={["ob flex w-full min-w-0 flex-col gap-6", className]}
+	data-onboarding
+	data-total={total}
+	data-fills={JSON.stringify(fills)}
+	data-headings={JSON.stringify(headings)}
+>
+	<form
+		class="ob-stage"
+		role="group"
+		aria-label={copy.label}
+		aria-describedby={`${uid}-hint`}
+		tabindex="0"
+		novalidate
+		data-ob-stage
+	>
+		<div class="ob-header">
+			<Image src={wordmark} alt="Loop" class="ob-wordmark" />
+			<button type="button" class="ob-close" data-ob-reset>{copy.close}</button>
+		</div>
+
+		<div class="ob-track">
+			<div
+				class="ob-progress"
+				role="progressbar"
+				aria-label="Onboarding progress"
+				aria-valuemin="1"
+				aria-valuemax={total}
+				aria-valuenow="1"
+				hidden
+				data-ob-progress
+			>
+				<span class="ob-fill" data-ob-fill></span>
+				<Image src={thumb} alt="" aria-hidden="true" class="ob-thumb" data-ob-thumb />
+			</div>
+		</div>
+		<p class="ob-count" data-ob-count-wrap data-concealed>
+			<span aria-hidden="true" data-ob-count>1/{total}</span>
+			<span class="sr-only" data-ob-count-sr>Step 1 of {total}</span>
+		</p>
+
+		<div class="ob-body">
+			<!-- 1. Intro: company info (unnumbered) -->
+			<section class="ob-screen ob-intro" data-ob-screen data-active>
+				<h3 class="ob-heading" tabindex="-1" data-ob-heading>{copy.intro.heading}</h3>
+				<div class="ob-intro-cols">
+					<div class="ob-intro-fields">
+						{
+							copy.intro.fields.map((f) => (
+								<div class="ob-field">
+									<label class="ob-label" for={`${uid}-${f.id}`}>
+										{f.label}
+									</label>
+									<input
+										class="ob-input ob-input-sm"
+										id={`${uid}-${f.id}`}
+										name={f.id}
+										type="text"
+										placeholder={f.placeholder}
+										autocomplete="off"
+									/>
+								</div>
+							))
+						}
+					</div>
+					<div class="ob-blob">
+						<Image src={blob} alt="" aria-hidden="true" class="ob-blob-img" />
+						<p class="ob-blob-text">{copy.intro.blobText}</p>
+						<button type="button" class="ob-pink" data-ob-next>{copy.intro.button}</button>
+					</div>
+				</div>
+			</section>
+
+			<!-- 2-6. Numbered steps -->
+			{
+				copy.steps.map((s) =>
+					s.kind === "input" ? (
+						<section class="ob-screen" data-ob-screen>
+							<h3 class="ob-heading" tabindex="-1" data-ob-heading>
+								<label for={`${uid}-${s.key}`}>{s.heading}</label>
+							</h3>
+							<input
+								class="ob-input ob-input-lg"
+								id={`${uid}-${s.key}`}
+								name={s.key}
+								type="text"
+								placeholder={s.placeholder}
+								autocomplete="off"
+								data-ob-answer={s.key}
+							/>
+						</section>
+					) : (
+						<section class="ob-screen" data-ob-screen>
+							<fieldset class="ob-fieldset">
+								<legend class="ob-legend">
+									<h3 class="ob-heading" tabindex="-1" data-ob-heading>
+										{s.heading}
+									</h3>
+								</legend>
+								<div class:list={["ob-cards", `ob-cards-${s.variant}`]}>
+									{s.options.map((o) => (
+										<label class:list={["ob-card", `ob-card-${s.variant}`]}>
+											<input class="ob-radio" type="radio" name={s.key} value={o.value} data-ob-answer={s.key} />
+											{o.icon && (
+												<span class="ob-badges" aria-hidden="true">
+													{(o.icon === "manual" || o.icon === "mix") && (
+														<Image src={person} alt="" class="ob-badge-person" />
+													)}
+													{(o.icon === "electric" || o.icon === "mix") && (
+														<Image src={bolt} alt="" class="ob-badge-bolt" />
+													)}
+													{o.icon === "mix" && (
+														<span class="ob-badge-line">
+															<Image src={line} alt="" />
+														</span>
+													)}
+												</span>
+											)}
+											{o.icon && <Image src={bike} alt="" aria-hidden="true" class="ob-bike" />}
+											<span class="ob-card-title">{o.value}</span>
+											{typeof o.body === "string" && <span class="ob-card-body">{o.body}</span>}
+											{Array.isArray(o.body) && (
+												<ul class="ob-card-body ob-card-list">
+													{o.body.map((b) => (
+														<li>{b}</li>
+													))}
+												</ul>
+											)}
+										</label>
+									))}
+								</div>
+							</fieldset>
+						</section>
+					),
+				)
+			}
+
+			<!-- 7. Finalize and book -->
+			<section class="ob-screen" data-ob-screen>
+				<h3 class="ob-heading" tabindex="-1" data-ob-heading>{copy.final.heading}</h3>
+				<div class="ob-final">
+					<div class="ob-plan">
+						<h4 class="ob-plan-heading">{copy.final.planHeading}</h4>
+						<ul class="ob-plan-list">
+							{
+								copy.final.plan.map((p) => (
+									<li>
+										{p.label && <span>{p.label} </span>}
+										<span data-ob-plan={p.key} data-default={p.value}>
+											{p.value}
+										</span>
+									</li>
+								))
+							}
+						</ul>
+					</div>
+					<div class="ob-final-actions">
+						<button type="button" class="ob-pink" data-ob-schedule>{copy.final.schedule}</button>
+						<button type="button" class="ob-pink" data-ob-reset>{copy.final.home}</button>
+						<p class="ob-status" role="status" data-ob-status data-message={copy.final.status}></p>
+					</div>
+				</div>
+			</section>
+		</div>
+	</form>
+
+	<p id={`${uid}-hint`} class="sr-only">{copy.hint}</p>
+	<p class="sr-only" aria-live="polite" data-ob-live></p>
+
+	<!-- Demo controls (not in the frames), styled like the Brand section's step card. -->
+	<div class="flex items-center justify-between gap-4">
+		<button type="button" class="ob-step-btn" disabled data-ob-back>{copy.controls.back}</button>
+		<button type="button" class="ob-step-btn" data-ob-next>{copy.controls.next}</button>
+	</div>
+</div>
+
+<style>
+	.ob {
+		--ob-stage-bg: #b0dcff;
+		--ob-stage-border: #d4d2cc;
+		--ob-royale: #145dd7;
+		--ob-royale-soft: rgba(20, 93, 215, 0.75);
+		--ob-surface: #fdfeff;
+		--ob-track: #ffffff;
+		--ob-lime: #cafe5b;
+		--ob-pink: #ffa4d3;
+		--ob-ink: #000000;
+		--ob-focus: #070707;
+		--ob-btn-bg: #b0dcff;
+		--ob-btn-hover: #d4ecff;
+
+		container-type: inline-size;
+		font-family: var(--loop-font-text, "Poppins", system-ui, sans-serif);
+	}
+
+	/* --u: one Figma px. Floor keeps phones legible. */
+	.ob-stage {
+		--u: max(0.45px, calc(100cqw / 1440));
+		--text: max(16px, calc(var(--u) * 32));
+
+		position: relative;
+		isolation: isolate;
+		display: flex;
+		flex-direction: column;
+		min-height: calc(var(--u) * 1024);
+		overflow: hidden;
+		background-color: var(--ob-stage-bg);
+		border: 1px solid var(--ob-stage-border);
+		border-radius: 4px;
+		color: var(--ob-royale);
+	}
+
+	/* Focus: 3px Dahlia, 2px offset, on everything interactive. */
+	.ob-stage:focus-visible,
+	.ob-heading:focus-visible,
+	.ob-close:focus-visible,
+	.ob-input:focus-visible,
+	.ob-pink:focus-visible,
+	.ob-step-btn:focus-visible,
+	.ob-card:has(.ob-radio:focus-visible) {
+		outline: 3px solid var(--ob-focus);
+		outline-offset: 2px;
+	}
+	.ob-stage:focus-visible {
+		outline-offset: -3px;
+	}
+
+	/* Header: wordmark left, Close & save right (frame: 144px tall). */
+	.ob-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		height: calc(var(--u) * 144);
+		padding-inline: max(16px, calc(var(--u) * 56)) max(16px, calc(var(--u) * 80));
+	}
+	.ob-wordmark {
+		width: max(64px, calc(var(--u) * 179));
+		height: auto;
+	}
+	.ob-close {
+		padding: 4px 2px;
+		/* Frame size, not scaled (at 2/3 it rendered 16px against the frame's 24px). */
+		font-size: 24px;
+		font-weight: 700;
+		line-height: normal;
+		color: var(--ob-pink);
+		background: none;
+		border: 0;
+		cursor: pointer;
+	}
+	.ob-close:hover {
+		text-decoration: underline;
+	}
+
+	/* Progress: white track, lime fill, circle thumb at the end of the fill. */
+	.ob-track {
+		position: relative;
+		height: max(8px, calc(var(--u) * 16));
+		background-color: var(--ob-track);
+	}
+	.ob-progress {
+		position: absolute;
+		inset: 0;
+	}
+	.ob-progress[hidden] {
+		display: none;
+	}
+	.ob-fill {
+		position: absolute;
+		inset-block: 0;
+		left: 0;
+		width: var(--fill, 0%);
+		background-color: var(--ob-lime);
+		transition: width 300ms ease-out;
+	}
+	.ob-thumb {
+		--size: max(16px, calc(var(--u) * 32));
+		position: absolute;
+		top: 50%;
+		left: clamp(0px, calc(var(--fill, 0%) - var(--size) / 2), calc(100% - var(--size)));
+		width: var(--size);
+		height: auto;
+		transform: translateY(-50%);
+		transition: left 300ms ease-out;
+	}
+	.ob-count {
+		padding: max(8px, calc(var(--u) * 16)) max(16px, calc(var(--u) * 56)) 0;
+		/* Frame size (22.175px), not scaled. */
+		font-size: 22.175px;
+		line-height: normal;
+		color: var(--ob-royale-soft);
+	}
+	/* Hidden on the intro but keeps its space, so the stage never changes height. */
+	.ob-count[data-concealed] {
+		visibility: hidden;
+	}
+
+	/* Body: every screen in one cell, vertically centered under the progress bar. */
+	.ob-body {
+		flex: 1;
+		display: grid;
+		align-items: center;
+		padding: max(16px, calc(var(--u) * 24)) max(16px, calc(var(--u) * 56)) max(24px, calc(var(--u) * 48));
+	}
+	.ob-screen {
+		grid-area: 1 / 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: max(20px, calc(var(--u) * 40));
+		min-width: 0;
+		visibility: hidden;
+	}
+	.ob-screen[data-active] {
+		visibility: visible;
+	}
+
+	.ob-heading {
+		font-size: max(24px, calc(var(--u) * 64));
+		font-weight: 600;
+		line-height: 1.2;
+		text-align: center;
+		color: var(--ob-royale);
+	}
+	.ob-heading label {
+		cursor: pointer;
+	}
+
+	/* Inputs: white, Royale border, solid Royale offset shadow (pseudo element on a
+	   wrapper isn't possible for <input>, so a hard box-shadow stands in). */
+	.ob-input {
+		width: 100%;
+		font: inherit;
+		color: var(--ob-royale);
+		background-color: var(--ob-surface);
+		border: max(1.5px, calc(var(--u) * 1.85)) solid var(--ob-royale);
+		border-radius: max(12px, calc(var(--u) * 25.6));
+	}
+	.ob-input::placeholder {
+		color: var(--ob-royale-soft);
+		opacity: 1;
+	}
+	.ob-input-lg {
+		max-width: calc(var(--u) * 874);
+		min-height: max(48px, calc(var(--u) * 91));
+		padding-inline: max(16px, calc(var(--u) * 88)) max(16px, calc(var(--u) * 32));
+		font-size: var(--text);
+		box-shadow: calc(var(--u) * 8) calc(var(--u) * 13) 0 0 var(--ob-royale);
+	}
+	.ob-input-sm {
+		max-width: max(240px, calc(var(--u) * 379));
+		min-height: max(44px, calc(var(--u) * 60));
+		padding-inline: max(16px, calc(var(--u) * 30));
+		font-size: max(16px, calc(var(--u) * 22));
+		box-shadow: calc(var(--u) * 16) calc(var(--u) * 8) 0 0 var(--ob-royale);
+	}
+
+	/* Intro: fields left, blob with "Now, let's build your plan" right. */
+	.ob-intro {
+		align-items: stretch;
+	}
+	.ob-intro-cols {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 32px;
+	}
+	.ob-intro-fields {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		gap: max(24px, calc(var(--u) * 64));
+	}
+	.ob-field {
+		display: flex;
+		flex-direction: column;
+		gap: max(12px, calc(var(--u) * 28));
+	}
+	.ob-label {
+		font-size: max(18px, calc(var(--u) * 32));
+		font-weight: 600;
+		line-height: normal;
+	}
+	.ob-blob {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: max(16px, calc(var(--u) * 40));
+		width: max(240px, calc(var(--u) * 482));
+		height: max(330px, calc(var(--u) * 662));
+		flex-shrink: 0;
+	}
+	/* Blob is drawn landscape in Figma and rotated -90.75deg into place. */
+	.ob-blob-img {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: max(330px, calc(var(--u) * 656));
+		height: auto;
+		max-width: none;
+		transform: translate(-50%, -50%) rotate(-90.75deg);
+		pointer-events: none;
+		z-index: -1;
+	}
+	.ob-blob-text {
+		max-width: max(180px, calc(var(--u) * 365));
+		font-size: max(20px, calc(var(--u) * 40));
+		font-weight: 500;
+		line-height: normal;
+		text-align: center;
+	}
+
+	/* Pink buttons: Anton, black border, solid black offset shadow. */
+	.ob-pink {
+		min-width: max(150px, calc(var(--u) * 271));
+		min-height: max(48px, calc(var(--u) * 92));
+		padding-inline: 16px;
+		font-family: var(--loop-font-display, "Anton", Impact, sans-serif);
+		font-size: max(16px, calc(var(--u) * 26));
+		line-height: normal;
+		color: var(--ob-ink);
+		background-color: var(--ob-pink);
+		border: max(2px, calc(var(--u) * 2.8)) solid var(--ob-ink);
+		border-radius: max(20px, calc(var(--u) * 39));
+		box-shadow: max(4px, calc(var(--u) * 11.7)) max(4px, calc(var(--u) * 12.7)) 0 0 var(--ob-ink);
+		cursor: pointer;
+		transition: transform 150ms ease-out;
+	}
+	.ob-pink:hover {
+		transform: translateY(-2px);
+	}
+	.ob-pink:active {
+		transform: translateY(1px);
+	}
+
+	/* Option cards: radios in a fieldset. */
+	.ob-fieldset {
+		min-width: 0;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+	.ob-legend {
+		display: block;
+		width: 100%;
+		padding: 0;
+		margin-bottom: max(20px, calc(var(--u) * 40));
+	}
+	.ob-cards {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 40px;
+		padding-bottom: 20px;
+	}
+	.ob-card {
+		position: relative;
+		display: flex;
+		width: 100%;
+		max-width: 20rem;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		min-height: 96px;
+		padding: 16px;
+		text-align: center;
+		background-color: var(--ob-surface);
+		border: max(1.5px, calc(var(--u) * 1.85)) solid var(--ob-royale);
+		border-radius: max(12px, calc(var(--u) * 25.6));
+		cursor: pointer;
+	}
+	/* Offset shadow from the frames: a Royale shape 2px right, 16px down, and
+	   ~22 x 20px larger than the card. */
+	.ob-card::before {
+		content: "";
+		position: absolute;
+		inset: calc(var(--u) * 16) calc(var(--u) * -24) calc(var(--u) * -36) calc(var(--u) * 2);
+		background-color: var(--ob-royale);
+		border-radius: inherit;
+		z-index: -1;
+	}
+	/* Selected (not in the frames): lime fill and a heavier border. */
+	.ob-card:has(.ob-radio:checked) {
+		background-color: var(--ob-lime);
+		border-width: max(3px, calc(var(--u) * 5));
+	}
+	.ob-radio {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.ob-card-title {
+		font-size: var(--text);
+		line-height: normal;
+		color: var(--ob-royale-soft);
+	}
+	.ob-card-tier .ob-card-title {
+		font-weight: 600;
+	}
+	.ob-card-tier {
+		justify-content: flex-start;
+	}
+	.ob-card-body {
+		font-size: 16px;
+		font-weight: 600;
+		line-height: normal;
+		color: var(--ob-royale);
+	}
+	.ob-card-list {
+		list-style: disc inside;
+	}
+
+	.ob-badges {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+		height: max(24px, calc(var(--u) * 42));
+	}
+	.ob-badges :global(img) {
+		height: 100%;
+		width: auto;
+	}
+	.ob-badge-bolt {
+		max-height: max(18px, calc(var(--u) * 32));
+	}
+	/* Mix: bolt sits on top of the person, as in the frame. */
+	.ob-badge-person + .ob-badge-bolt {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-75%);
+	}
+	.ob-badge-line {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 4px;
+		height: 100%;
+	}
+	.ob-badge-line :global(img) {
+		width: max(24px, calc(var(--u) * 38));
+		height: auto;
+		max-width: none;
+		transform: rotate(-90deg);
+	}
+	.ob-bike {
+		width: max(72px, calc(var(--u) * 129));
+		height: auto;
+	}
+
+	/* Final: plan card left, actions right. */
+	.ob-final {
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		align-items: center;
+		gap: 40px;
+	}
+	.ob-plan {
+		position: relative;
+		width: 100%;
+		max-width: calc(var(--u) * 782);
+		min-width: min(100%, 16rem);
+		padding: max(12px, calc(var(--u) * 10)) max(16px, calc(var(--u) * 52)) max(24px, calc(var(--u) * 48));
+		margin-bottom: 14px;
+		background-color: var(--ob-surface);
+		border: max(1.5px, calc(var(--u) * 1.85)) solid var(--ob-royale);
+		border-radius: max(12px, calc(var(--u) * 25.6));
+	}
+	.ob-plan::before {
+		content: "";
+		position: absolute;
+		inset: calc(var(--u) * 19) calc(var(--u) * -32) calc(var(--u) * -14) calc(var(--u) * 22);
+		background-color: var(--ob-royale);
+		border-radius: inherit;
+		z-index: -1;
+	}
+	.ob-plan-heading {
+		margin-bottom: max(16px, calc(var(--u) * 70));
+		font-size: var(--text);
+		font-weight: 600;
+		line-height: normal;
+		text-align: center;
+		color: var(--ob-royale-soft);
+	}
+	.ob-plan-list {
+		font-size: var(--text);
+		font-weight: 500;
+		line-height: normal;
+		overflow-wrap: anywhere;
+	}
+	.ob-final-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: max(24px, calc(var(--u) * 45));
+	}
+	.ob-status {
+		min-height: 1.5em;
+		font-size: 16px;
+		font-weight: 600;
+		text-align: center;
+		color: var(--ob-royale);
+	}
+
+	/* From 640px: cards in a row, intro and final side by side. */
+	@media (min-width: 640px) {
+		.ob-cards {
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: stretch;
+			gap: max(48px, calc(var(--u) * 88)) max(40px, calc(var(--u) * 88));
+			padding-bottom: calc(var(--u) * 36);
+		}
+		.ob-card {
+			width: max(8.5rem, calc(var(--u) * 225));
+			max-width: none;
+			min-height: max(8.5rem, calc(var(--u) * 252));
+			padding: max(8px, calc(var(--u) * 12));
+		}
+		.ob-card-plain {
+			width: max(7rem, calc(var(--u) * 225));
+		}
+		.ob-card-tier {
+			width: max(10.5rem, calc(var(--u) * 225));
+		}
+		.ob-intro-cols {
+			flex-direction: row;
+			align-items: flex-start;
+			justify-content: space-between;
+			padding-inline: calc(var(--u) * 29) calc(var(--u) * 30);
+		}
+		.ob-intro-fields {
+			width: auto;
+			flex: 1;
+			padding-top: calc(var(--u) * 24);
+		}
+		.ob-final {
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			gap: max(48px, calc(var(--u) * 92));
+		}
+		.ob-plan {
+			min-height: calc(var(--u) * 525);
+		}
+	}
+
+	/* Back / Next: same as the step card in the Brand section. */
+	.ob-step-btn {
+		min-width: 64px;
+		height: 64px;
+		padding: 0 12px;
+		font-family: var(--loop-font-display, "Anton", Impact, sans-serif);
+		font-size: 16px;
+		line-height: normal;
+		white-space: nowrap;
+		color: var(--ob-royale);
+		background-color: var(--ob-btn-bg);
+		border: solid var(--ob-royale);
+		border-width: 4px 8px 8px 4px;
+		border-radius: 12px;
+		cursor: pointer;
+		transition:
+			transform 200ms ease-out,
+			background-color 200ms ease-out;
+	}
+	.ob-step-btn:hover:not(:disabled) {
+		background-color: var(--ob-btn-hover);
+		transform: translateY(-2px);
+	}
+	.ob-step-btn:active:not(:disabled) {
+		transform: translateY(1px);
+		transition-duration: 60ms;
+	}
+	.ob-step-btn:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ob-fill,
+		.ob-thumb,
+		.ob-pink,
+		.ob-step-btn {
+			transition: none;
+		}
+		.ob-pink:hover,
+		.ob-pink:active,
+		.ob-step-btn:hover:not(:disabled),
+		.ob-step-btn:active:not(:disabled) {
+			transform: none;
+		}
+	}
+</style>
+
+<script>
+	document.querySelectorAll<HTMLElement>("[data-onboarding]").forEach((root) => {
+		const total = Number(root.dataset.total);
+		const fills: string[] = JSON.parse(root.dataset.fills!);
+		const headingText: string[] = JSON.parse(root.dataset.headings!);
+		const stage = root.querySelector<HTMLFormElement>("[data-ob-stage]")!;
+		const screens = Array.from(root.querySelectorAll<HTMLElement>("[data-ob-screen]"));
+		const headings = screens.map((s) => s.querySelector<HTMLElement>("[data-ob-heading]")!);
+		const progress = root.querySelector<HTMLElement>("[data-ob-progress]")!;
+		const countWrap = root.querySelector<HTMLElement>("[data-ob-count-wrap]")!;
+		const count = root.querySelector<HTMLElement>("[data-ob-count]")!;
+		const countSr = root.querySelector<HTMLElement>("[data-ob-count-sr]")!;
+		const live = root.querySelector<HTMLElement>("[data-ob-live]")!;
+		const status = root.querySelector<HTMLElement>("[data-ob-status]")!;
+		const back = root.querySelector<HTMLButtonElement>("[data-ob-back]")!;
+		const nextBtn = root.querySelectorAll<HTMLButtonElement>("[data-ob-next]");
+		const stepNext = nextBtn[nextBtn.length - 1];
+		const last = screens.length - 1;
+		let current = 0;
+
+		const show = (index: number, focus = true) => {
+			current = index;
+			screens.forEach((s, i) => s.toggleAttribute("data-active", i === index));
+
+			const n = Math.min(index, total);
+			progress.hidden = index === 0;
+			countWrap.toggleAttribute("data-concealed", index === 0);
+			progress.style.setProperty("--fill", fills[index]);
+			progress.setAttribute("aria-valuenow", String(Math.max(n, 1)));
+			progress.setAttribute("aria-valuetext", `Step ${n} of ${total}`);
+			count.textContent = `${n}/${total}`;
+			countSr.textContent = `Step ${n} of ${total}`;
+
+			back.disabled = index === 0;
+			// Moving focus off a button that is about to be disabled.
+			if (index === last && document.activeElement === stepNext) back.focus();
+			stepNext.disabled = index === last;
+
+			const where = index === 0 ? "Company info" : index === last ? "Final screen" : `Step ${n} of ${total}`;
+			live.textContent = `${where}: ${headingText[index]}`;
+			if (focus) headings[index].focus();
+		};
+
+		const step = (delta: number) => {
+			const target = current + delta;
+			if (target >= 0 && target <= last) show(target);
+		};
+
+		// Plan card: the visitor's answers, or the frame's sample values.
+		const answer = (key: string, value: string) => {
+			root.querySelectorAll<HTMLElement>(`[data-ob-plan="${key}"]`).forEach((el) => {
+				el.textContent = value.trim() || el.dataset.default!;
+			});
+		};
+		stage.addEventListener("input", (e) => {
+			const el = e.target as HTMLInputElement;
+			if (el.dataset.obAnswer && el.type === "text") answer(el.dataset.obAnswer, el.value);
+		});
+		stage.addEventListener("change", (e) => {
+			const el = e.target as HTMLInputElement;
+			if (el.dataset.obAnswer && el.type === "radio" && el.checked) answer(el.dataset.obAnswer, el.value);
+		});
+
+		const reset = (focus = true) => {
+			stage.reset();
+			root.querySelectorAll<HTMLElement>("[data-ob-plan]").forEach((el) => (el.textContent = el.dataset.default!));
+			status.textContent = "";
+			show(0, focus);
+		};
+
+		// The stage is a <form> only for reset(); it never submits.
+		stage.addEventListener("submit", (e) => e.preventDefault());
+		root.querySelectorAll("[data-ob-reset]").forEach((b) => b.addEventListener("click", () => reset()));
+		nextBtn.forEach((b) => b.addEventListener("click", () => step(1)));
+		back.addEventListener("click", () => step(-1));
+		root.querySelector("[data-ob-schedule]")!.addEventListener("click", () => {
+			status.textContent = status.dataset.message!;
+		});
+
+		// Arrow keys step when the stage itself (or a screen heading) has focus;
+		// inputs and radio groups keep their own arrow-key behavior.
+		stage.addEventListener("keydown", (e) => {
+			const t = e.target as HTMLElement;
+			if (t !== stage && !t.hasAttribute("data-ob-heading")) return;
+			if (e.key === "ArrowRight") {
+				e.preventDefault();
+				step(1);
+			} else if (e.key === "ArrowLeft") {
+				e.preventDefault();
+				step(-1);
+			}
+		});
+
+		show(0, false);
+
+		// Back/forward cache restores the page exactly as it was left (e.g. on the tier
+		// screen), so start over on the company info screen.
+		window.addEventListener("pageshow", (e) => {
+			if (e.persisted) reset(false);
+		});
+	});
+</script>

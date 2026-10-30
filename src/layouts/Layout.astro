@@ -3,9 +3,11 @@ import "../styles/global.css";
 
 interface Props {
 	title?: string;
+	/** Keep the page out of search results (drafts). */
+	noindex?: boolean;
 }
 
-const { title = "Josh Borja — Product Designer" } = Astro.props;
+const { title = "Josh Borja — Product Designer", noindex = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -16,6 +18,7 @@ const { title = "Josh Borja — Product Designer" } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link

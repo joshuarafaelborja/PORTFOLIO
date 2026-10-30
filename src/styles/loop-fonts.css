@@ -1,0 +1,56 @@
+/*
+ * Loop case study fonts. Imported only by src/pages/work/loop.astro, so these
+ * @font-face rules and variables ship on that page alone.
+ *
+ * Self-hosted from public/fonts/loop/ (only the weights the page uses).
+ * Until a file is present the browser falls back to the next family in the stack.
+ *
+ *   Poppins 400, 700   step card label + title
+ *   Anton 400          step card fields + buttons, pill headings
+ *   Tilt Neon 400      "Solution 0N" chips
+ *   Syncopate 700      "Brand in use" pill
+ */
+
+@font-face {
+	font-family: "Poppins";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/loop/poppins-400.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Poppins";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/fonts/loop/poppins-700.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Anton";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/loop/anton-400.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Tilt Neon";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("/fonts/loop/tilt-neon-400.woff2") format("woff2");
+}
+@font-face {
+	font-family: "Syncopate";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("/fonts/loop/syncopate-700.woff2") format("woff2");
+}
+
+:root {
+	--loop-font-text: "Poppins", system-ui, sans-serif;
+	--loop-font-display: "Anton", Impact, "Arial Narrow", sans-serif;
+	--loop-font-chip: "Tilt Neon", "Space Grotesk", sans-serif;
+	/* Pill headings. To switch to Tilt Neon: var(--loop-font-chip) */
+	--loop-pill-font: var(--loop-font-display);
+}

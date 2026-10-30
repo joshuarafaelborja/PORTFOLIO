@@ -11,17 +11,24 @@ interface Props {
 	label: string;
 	/** "light" for cream sections, "dark" for dark stages. */
 	tone?: "light" | "dark";
+	/** "loop": value and label on one centered row, value in Loop blue (Figma 1010:131). */
+	variant?: "default" | "loop";
 }
 
-const { value, label, tone = "light" } = Astro.props;
+const { value, label, tone = "light", variant = "default" } = Astro.props;
+const loop = variant === "loop";
 const parts = value.split("→");
 ---
 
-<div class="flex flex-col items-start gap-1 p-4 text-left">
+<div
+	class={loop
+		? "flex flex-row flex-wrap items-center justify-center gap-3 text-center"
+		: "flex flex-col items-start gap-1 p-4 text-left"}
+>
 	<p
 		class:list={[
 			"font-space-grotesk text-2xl leading-[normal] font-bold whitespace-nowrap",
-			tone === "dark" ? "text-[#ffffff]" : "text-[#1a1a1a]",
+			loop ? "text-[#0052cc]" : tone === "dark" ? "text-[#ffffff]" : "text-[#1a1a1a]",
 		]}
 	>
 		{
