@@ -6,9 +6,9 @@
  * Until a file is present the browser falls back to the next family in the stack.
  *
  *   Poppins 400, 700   step card label + title
- *   Anton 400          step card fields + buttons
+ *   Anton 400          step card fields + buttons, pill headings
  *   Tilt Neon 400      "Solution 0N" chips
- *   Syncopate 700      Problem pills + "Brand in use" pill
+ *   Syncopate 700      "Brand in use" pill
  */
 
 @font-face {
@@ -52,5 +52,5 @@
 	--loop-font-display: "Anton", Impact, "Arial Narrow", sans-serif;
 	--loop-font-chip: "Tilt Neon", "Space Grotesk", sans-serif;
 	/* Pill headings. To switch to Tilt Neon: var(--loop-font-chip) */
-	--loop-pill-font: "Syncopate", "Space Grotesk", sans-serif;
+	--loop-pill-font: var(--loop-font-display);
 }

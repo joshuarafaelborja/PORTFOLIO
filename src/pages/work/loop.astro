@@ -11,6 +11,8 @@ import TabSwitcher from "../../components/TabSwitcher.astro";
 import ImagePlaceholder from "../../components/ImagePlaceholder.astro";
 import CallBrief from "../../components/CallBrief.astro";
 import OnboardingFlow from "../../components/OnboardingFlow.astro";
+import StatStrip from "../../components/StatStrip.astro";
+import Footer from "../../components/Footer.astro";
 import {
 	page,
 	hero,
@@ -23,7 +25,6 @@ import {
 	ctas,
 	onboarding,
 	onboardingFlow,
-	delivered,
 	rebuild,
 	reflection,
 } from "../../data/loop";
@@ -33,12 +34,22 @@ const poster = (await getImage({ src: outcome.video.poster, format: "webp" })).s
 
 const text = "font-space-grotesk text-base text-[#1a1a1a]";
 const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base text-[#1a1a1a]";
+// Shared by the Problem and Tried / Noticed / Fix rows. Grid rows stretch, so pills in a
+// row are the same height; content is top-anchored so the headings line up.
+// The CTA exports (Figma 1052:435-438) are 24px-radius rectangles at 2x with a dark fill
+// baked in outside the curve. Match that curve as a % of the image so it scales with it
+// and clips the dark corners; +1px covers the border.
+const ctaRadius = ({ width, height }: { width: number; height: number }) =>
+	`border-radius: calc(${(4800 / width).toFixed(3)}% + 1px) / calc(${(4800 / height).toFixed(3)}% + 1px)`;
+const pill = "loop-pill flex flex-col items-center justify-start gap-2 px-6 py-5 text-center";
+const pillBody = "font-space-grotesk text-base leading-[1.4] text-[#1a1a1a]";
 ---
 
 <CaseStudyLayout title={page.title} heroSrc={hero.src} heroAlt={hero.alt} meta={meta} noindex>
 	<CaseStudySection eyebrow={outcome.eyebrow} heading={outcome.heading}>
-		<!-- Landing page scroll recording. Autoplays muted on loop; with reduced motion it
-		     stays on the poster and shows a Play/Pause button instead. -->
+		<!-- Landing page scroll recording. Autoplays muted on loop. The button only shows with
+		     reduced motion (poster + Play/Pause) or when the video is paused, e.g. if the
+		     browser blocks autoplay. -->
 		<div class="relative w-full">
 			<video
 				autoplay
@@ -66,23 +77,34 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 			<!-- Inline and right after the video, so it runs before autoplay starts. -->
 			<script is:inline>
 				(() => {
-					if (!matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+					const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 					const wrap = document.currentScript.parentElement;
 					const video = wrap.querySelector("video");
 					const button = wrap.querySelector("button");
-					video.autoplay = false;
-					video.removeAttribute("autoplay");
-					video.pause();
-					button.hidden = false;
+					const sync = () => {
+						button.hidden = !reduce && !video.paused;
+						button.textContent = video.paused ? button.dataset.play : button.dataset.pause;
+					};
+					if (reduce) {
+						video.autoplay = false;
+						video.removeAttribute("autoplay");
+						video.pause();
+						sync();
+					} else {
+						// Autoplay blocked: leave it paused and offer Play.
+						video.play().catch(sync);
+					}
+					video.addEventListener("play", sync);
+					video.addEventListener("pause", sync);
 					button.addEventListener("click", () => {
 						if (video.paused) video.play();
 						else video.pause();
 					});
-					video.addEventListener("play", () => (button.textContent = button.dataset.pause));
-					video.addEventListener("pause", () => (button.textContent = button.dataset.play));
 				})();
 			</script>
 		</div>
+		<!-- Same strip and border as the EduSeek hero stats. -->
+		<StatStrip stats={outcome.stats} class="border-y border-[#d4d2cc]" />
 		<p class={text}>{outcome.body}</p>
 	</CaseStudySection>
 
@@ -95,9 +117,9 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 		<ul class="grid w-full grid-cols-1 gap-4 lg:grid-cols-3">
 			{
 				problem.pills.map((p) => (
-					<li class="loop-pill flex min-h-[124px] flex-col items-center justify-center gap-4 px-8 py-6 text-center">
+					<li class={pill}>
 						<h3 class="loop-pill-heading">{p.heading}</h3>
-						<p class={text}>{p.body}</p>
+						<p class={pillBody}>{p.body}</p>
 					</li>
 				))
 			}
@@ -150,7 +172,8 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 										alt={img.alt}
 										widths={[img.src.width / 2, img.src.width]}
 										sizes="(min-width: 1056px) 560px, 100vw"
-										class="h-auto w-full rounded-[4px] border border-[#d4d2cc]"
+										class="h-auto w-full border border-[#d4d2cc]"
+										style={ctaRadius(img.src)}
 									/>
 								</figure>
 							))}
@@ -162,12 +185,22 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow={onboarding.eyebrow} heading={onboarding.heading}>
-		<ul class={bullets}>{onboarding.bullets.map((b) => <li>{b}</li>)}</ul>
-		<OnboardingFlow copy={onboardingFlow} />
-	</CaseStudySection>
-
-	<CaseStudySection eyebrow={delivered.eyebrow} heading={delivered.heading}>
-		<p class={text}>{delivered.body}</p>
+		<!-- Figma 1047:154, restyled to match the Problem pills. Stacked below lg,
+		     three across from lg up. -->
+		<ul class="grid w-full grid-cols-1 gap-4 lg:grid-cols-3">
+			{
+				onboarding.pills.map((p) => (
+					<li class={pill}>
+						<h3 class="loop-pill-heading">{p.heading}</h3>
+						<p class={pillBody}>{p.body}</p>
+					</li>
+				))
+			}
+		</ul>
+		<figure class="flex w-full flex-col gap-2">
+			<OnboardingFlow copy={onboardingFlow} />
+			<figcaption class="font-space-grotesk text-base text-[#1a1a1a]">{onboarding.caption}</figcaption>
+		</figure>
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow={rebuild.eyebrow} heading={rebuild.heading}>
@@ -180,7 +213,7 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 					alt={rebuild.accessibility.image.alt}
 					name={rebuild.accessibility.image.placeholder}
 					ratio={[16, 10]}
-					class="mt-4 mb-4"
+					class="mt-4 mb-4 border border-[#d4d2cc]"
 				/>
 			</li>
 			<li>
@@ -208,11 +241,11 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 			<p class={text}>{reflection.body}</p>
 		</div>
 	</CaseStudySection>
+
+	<Footer />
 </CaseStudyLayout>
 
 <style>
-	/* Lime pill from Figma (986:164 / 1014:2298): Energy fill, heavy black
-	   bottom/right edge. */
 	/* White card, Royale border and Royale offset shadow (Brand section). */
 	.loop-card {
 		background-color: #fff;
@@ -220,18 +253,22 @@ const bullets = "flex list-disc flex-col gap-1 pl-6 font-space-grotesk text-base
 		border-radius: 16px;
 		box-shadow: 8px 8px 0 0 #145dd7;
 	}
+	/* Lime pill (Problem and Tried / Noticed / Fix rows): Energy fill, thin black
+	   border, hard black offset shadow. Lighter take on Figma 986:164 / 1047:154. */
 	.loop-pill {
 		background-color: #d3ff6c;
-		border: solid #000;
-		border-width: 4px 16px 12px 4px;
-		border-radius: 75px;
+		border: 2px solid #000;
+		border-radius: 32px;
+		box-shadow: 4px 4px 0 0 #000;
 	}
-	/* Heading font is one variable in src/styles/loop-fonts.css (--loop-pill-font). */
+	/* Heading font is one variable in src/styles/loop-fonts.css (--loop-pill-font).
+	   Anton ships in one weight (400). */
 	.loop-pill-heading {
 		font-family: var(--loop-pill-font);
-		font-size: 16px;
-		font-weight: 700;
+		font-size: 18px;
+		font-weight: 400;
 		line-height: normal;
+		text-transform: uppercase;
 		color: #070707;
 	}
 </style>

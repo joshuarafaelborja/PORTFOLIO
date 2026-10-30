@@ -14,19 +14,21 @@ import type { CallBriefData } from "../components/CallBrief.astro";
 import type { OnboardingCopy } from "../components/OnboardingFlow.astro";
 import landingScroll from "../assets/work/loop/2026-10-28-loop-landing-scroll-cropped.mp4?url";
 import landingScrollPoster from "../assets/work/loop/2026-10-28-loop-landing-scroll-cropped-poster.png";
-import heroImage from "../assets/work/loop/2026-10-28-loop-hero.png";
+import heroImage from "../assets/work/loop/2026-10-29-loop-hero.png";
+import revisited from "../assets/work/loop/2026-10-28-loop-revisited.png";
 import brandCard from "../assets/work/loop/brand-card.png";
 import wordmarkVersions from "../assets/work/loop/wordmark-versions.svg";
-import headerBefore from "../assets/work/loop/cta-header-before.png";
-import headerAfter from "../assets/work/loop/cta-header-after.png";
-import heroBefore from "../assets/work/loop/cta-hero-before.png";
-import heroAfter from "../assets/work/loop/cta-hero-after.png";
+// CTA before/after: Figma 1052:435-438, exported at 2x.
+import headerBefore from "../assets/work/loop/2026-10-29-loop-cta-header-before.png";
+import headerAfter from "../assets/work/loop/2026-10-29-loop-cta-header-after.png";
+import heroBefore from "../assets/work/loop/2026-10-29-loop-cta-hero-before.png";
+import heroAfter from "../assets/work/loop/2026-10-29-loop-cta-hero-after.png";
 
 export const page = {
 	title: "Loop",
 };
 
-// Hero: Figma 860:136 ("loop box thing"), exported at 2x (5168 x 2807).
+// Hero: Figma 1046:427 ("loop-hero-final", a copy of 860:136), exported at 1x (2792 x 1396).
 export const hero = {
 	src: heroImage,
 	alt: "Loop wordmark with the letter o repeated around it, suggesting a loop",
@@ -35,7 +37,7 @@ export const hero = {
 export const meta = [
 	{ label: "Timeline", value: "May 2025 - Jun 2025" },
 	{ label: "Role", value: "Product Designer" },
-	{ label: "Tools", value: "Figma, Magic Patterns" },
+	{ label: "Tools", value: "Figma" },
 	{ label: "Deliverables", value: "Landing Page, B2B Onboarding Flow" },
 ];
 
@@ -50,6 +52,13 @@ export const outcome = {
 		play: "Play",
 		pause: "Pause",
 	},
+	// StatStrip under the video. Design facts only, no performance numbers.
+	stats: [
+		{ value: "0 → 3", label: "brand, landing page and B2B flow, in 4 weeks" },
+		{ value: "2 → 1", label: "hero buttons on the landing page" },
+		{ value: "5 steps", label: "handed off as a flow outline Loop could build from" },
+		{ value: "Liked", label: "Loop’s feedback on the branding and the onboarding flow" },
+	],
 	body: "Loop is a Brighton e-bike startup. When we started, they had no brand, no website, and no way for an organization to start renting. Between May and June 2025, our three-person design team built all three. I owned the landing page and the B2B onboarding flow, and I gave input on the color scheme and fonts.",
 };
 
@@ -65,7 +74,7 @@ export const problem = {
 	pills: [
 		{ heading: "#1 NO BRAND", body: "Loop had no brand assets or digital presence to build from." },
 		{ heading: "#2 NO B2B FLOW", body: "No clear path from learning about Loop to picking a plan and booking a call" },
-		{ heading: "#3 LITTLE DIRECTION", body: "Loop gave us a list of competitors and its research but little feedback after" },
+		{ heading: "#3 LITTLE DIRECTION", body: "Loop gave us a list of competitors and its research but little feedback after." },
 	],
 };
 
@@ -125,7 +134,7 @@ export const screenshotSteps: Step[] = stepTitles.map((title, i) => ({
 export const brand = {
 	eyebrow: "Design Decision",
 	heading: "The brand system",
-	body: "Our brand lead had the final say on the brand system. I gave input on the color scheme and font selection. The wordmark is built on Tilt Neon, chosen for its rounded curves and friendly feel, which nod to movement and cycling. The palette starts with Royale and softens it with Powder, warm enough to feel approachable to commuters and distinct enough to stand out against competitors.",
+	body: "Our brand lead had the final say on the brand system. I gave input on the color scheme and font selection. Loop’s brand story asks for design that feels inclusive and human, with no jargon and none of the exclusivity of premium products. Its voice is friendly, clear, empowering and inclusive. The rounded Tilt Neon wordmark and the soft Powder palette read that way: approachable, not niche.",
 	wordmarks: {
 		src: wordmarkVersions,
 		alt: "Loop wordmark in three versions: primary, monochrome, and reversed for dark backgrounds.",
@@ -163,10 +172,16 @@ export const ctas = {
 export const onboarding = {
 	eyebrow: "Design Decision",
 	heading: "Rebuilding the B2B onboarding flow",
-	bullets: [
-		"Tried: our first flow had no visual progress indicators, too many options per screen, and no connection to Loop’s brand.",
-		"What I noticed: competitors made renting a bike a long process. Loop’s goal was simpler: get a call booked.",
-		"Fix: I broke the flow into five numbered steps, one question each: company size, budget, subscription length, bike type, and tier level, after a short company info screen. A progress bar and step counter show where you are. A final screen confirms the choices and books the call. I applied Loop’s brand system to every screen. By the time someone books, Loop already knows what they want, so the call can start with specifics instead of general questions.",
+	// Under the onboarding demo, which opens on the company info screen.
+	caption: "Original company info screen, before the five numbered steps.",
+	// Tried / Noticed / Fix pills, verbatim from Figma 1047:154.
+	pills: [
+		{ heading: "What I tried", body: "No progress indicators, too many options per screen, and no tie to Loop’s brand." },
+		{ heading: "What I noticed", body: "Competitors made renting a bike a long process. Loop’s goal was simpler: get a call booked." },
+		{
+			heading: "The fix",
+			body: "Five numbered steps, one question each, with a progress bar and step counter. Loop’s brand is on every screen.",
+		},
 	],
 };
 
@@ -239,15 +254,9 @@ export const onboardingFlow = {
 	controls: { back: "Back", next: "Next" },
 } satisfies OnboardingCopy;
 
-export const delivered = {
-	eyebrow: "Outcome",
-	heading: "What we delivered",
-	body: "We delivered a brand system, a landing page, and a B2B onboarding flow for a company that had none of them. With limited feedback, I trusted my own judgment and let Loop’s research and our competitor analysis lead.",
-};
-
-// "What I'd do today" (between "What we delivered" and "Looking back").
+// "What I'd do today" (between the onboarding section and "Looking back").
 // Each bullet renders its visual underneath: an image slot or the CallBrief card.
-// The revisited image is a placeholder until the file is ready (see note at top).
+// Revisited screen: Figma 1038:427 ("loop-revisited-final"), exported at 2x.
 export const rebuild = {
 	eyebrow: "If I rebuilt it",
 	heading: "What I’d do today",
@@ -255,7 +264,11 @@ export const rebuild = {
 	accessibility: {
 		lead: "Fix accessibility first.",
 		body: "I’d run a contrast and text size pass: a visible “Close & save”, a progress bar you can actually see, and 16px minimum text.",
-		image: { src: "", alt: "Onboarding flow revisited with higher contrast and 16px minimum text", placeholder: "revisited" },
+		image: {
+			src: revisited,
+			alt: "Revisited onboarding screen: Step 5 of 5 progress bar, Tier 2 selected with a checkmark, underlined Close & save, Back and Next buttons",
+			placeholder: "revisited",
+		},
 	},
 	ai: {
 		lead: "Use AI to brief the call.",
@@ -266,7 +279,7 @@ export const rebuild = {
 		answersHeading: "Their answers",
 		answers: [
 			{ label: "Company size", value: "50-100" },
-			{ label: "Budget", value: "$10,000 - 20,000" },
+			{ label: "Budget", value: "$10,000 - $20,000" },
 			{ label: "Subscription", value: "2 years" },
 			{ label: "Bike type", value: "Electric" },
 			{ label: "Tier", value: "Tier 1" },
@@ -286,12 +299,15 @@ export const reflection = {
 	eyebrow: "Reflection",
 	heading: "Looking back",
 	bullets: [
-		"Scope: Loop was only looking at companies at first. We wanted to leave room for individual renters too, but time pushed us to design for companies only. I learned to scope around what I can actually ship in the time I have.",
+		{
+			lead: "Scope:",
+			body: "Loop was only looking at companies at first. We wanted to leave room for individual renters too, but time pushed us to design for companies only. I learned to scope around what I can actually ship in the time I have.",
+		},
 		// TODO: add what the research found Loop's users needed
 		{
 			lead: "Matching the flow to the brand:",
-			body: "I restyled the onboarding flow to match Loop’s website: the wordmark in the header, mostly one question per screen, a progress bar, and cards with the brand’s offset shadows. Accessibility was part of Loop’s identity.",
+			body: "I restyled the onboarding flow to match Loop’s website: the wordmark in the header, mostly one question per screen, a progress bar, and cards with the brand’s offset shadows. Accessibility was a goal. When I audited the flow later, I found misses (see above).",
 		},
 	],
-	body: "Loop started with no brand, no site, and no path for an organization to get in touch. We left them with all three. My part was the landing page and the onboarding flow: clearer buttons, five steps, and a call that starts with specifics, plus input on color and type. The biggest thing I took from it: scope around what I can ship, and start from what the business actually wants.",
+	body: "The biggest thing I took from it: scope around what I can ship, and start from what the business actually wants.",
 };
