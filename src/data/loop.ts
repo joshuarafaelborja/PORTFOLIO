@@ -56,7 +56,7 @@ export const outcome = {
 	stats: [
 		{ value: "0 → 3", label: "brand, landing page and B2B flow, in 4 weeks" },
 		{ value: "2 → 1", label: "hero buttons on the landing page" },
-		{ value: "5 steps", label: "handed off as a flow outline Loop could build from" },
+		{ value: "5 steps", label: "numbered steps in the B2B onboarding flow" },
 		{ value: "Liked", label: "Loop’s feedback on the branding and the onboarding flow" },
 	],
 	body: "Loop is a Brighton e-bike startup. When we started, they had no brand, no website, and no way for an organization to start renting. Between May and June 2025, our three-person design team built all three. I owned the landing page and the B2B onboarding flow, and I gave input on the color scheme and fonts.",
@@ -65,7 +65,7 @@ export const outcome = {
 export const context = {
 	eyebrow: "Context",
 	heading: "A brand built on partnership, not transactions",
-	body: "Loop partners with cities and organizations to make cycling more accessible. At first, they were only looking to rent bikes to companies. They had no brand to carry that mission, so our team built one around a relationship-first approach: clear communication, flexible design, and a tone that speaks with people, not at them. We were three designers: our project lead, our brand lead, and me. I focused on the landing page and the onboarding flow.",
+	body: "Loop’s goal was to partner with both cities and organizations to make cycling more accessible. At first, they were only looking to rent bikes to companies. They had no brand to carry that mission, so our team built one around a relationship-first approach: clear communication, flexible design, and a tone that speaks with people, not at them. We were three designers: our project lead, our brand lead, and me. I focused on the landing page and the onboarding flow.",
 };
 
 export const problem = {
@@ -74,7 +74,7 @@ export const problem = {
 	pills: [
 		{ heading: "#1 NO BRAND", body: "Loop had no brand assets or digital presence to build from." },
 		{ heading: "#2 NO B2B FLOW", body: "No clear path from learning about Loop to picking a plan and booking a call" },
-		{ heading: "#3 LITTLE DIRECTION", body: "Loop gave us a list of competitors and its research but little feedback after." },
+		{ heading: "#3 LITTLE DIRECTION", body: "Loop gave us a list of competitors and its research, then gave us room to set our own direction." },
 	],
 };
 
@@ -228,12 +228,12 @@ export const onboardingFlow = {
 			variant: "tier",
 			heading: "Select your tier level",
 			options: [
-				{ value: "Tier 1", body: "Basic/functional electric or manual Bike, helmet and lock. Theft insurance. 6 monthly maintenance checks" },
+				{ value: "Tier 1", body: "Electric or manual bike, helmet and lock. Insurance and maintenance included." },
 				{
 					value: "Tier 2",
-					body: ["Robust electric or manual bike.", "Quality helmet and highly secure lock. Theft and injury insurance and maintenance"],
+					body: ["Upgraded electric or manual bike.", "Upgraded helmet and lock. Insurance and maintenance included."],
 				},
-				{ value: "Tier 3", body: "Top of the range electric or manual bike. Benefits of Tier 2 GPS tracking, analytics and Corporate branding." },
+				{ value: "Tier 3", body: "Top-tier electric or manual bike. Everything in Tier 2, plus extra features." },
 			],
 		},
 	],
@@ -303,7 +303,6 @@ export const reflection = {
 			lead: "Scope:",
 			body: "Loop was only looking at companies at first. We wanted to leave room for individual renters too, but time pushed us to design for companies only. I learned to scope around what I can actually ship in the time I have.",
 		},
-		// TODO: add what the research found Loop's users needed
 		{
 			lead: "Matching the flow to the brand:",
 			body: "I restyled the onboarding flow to match Loop’s website: the wordmark in the header, mostly one question per screen, a progress bar, and cards with the brand’s offset shadows. Accessibility was a goal. When I audited the flow later, I found misses (see above).",
