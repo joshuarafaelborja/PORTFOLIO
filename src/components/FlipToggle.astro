@@ -48,7 +48,7 @@ const CAPTION_MAX = 560;
 ---
 
 <div
-	class="flex min-h-[480px] w-full flex-col items-center justify-center gap-6 bg-[#1e1e1e] px-4 pt-24 pb-12 sm:pt-12 lg:py-16"
+	class="flex min-h-[480px] w-full flex-col items-center justify-center gap-6 rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] px-4 pt-24 pb-12 sm:pt-12 lg:py-16"
 	data-flip-toggle
 	data-variant={variant === "loop" ? "loop" : undefined}
 	data-label-a={first.label}
@@ -99,11 +99,11 @@ const CAPTION_MAX = 560;
 					<path class="flip-draw flip-draw-head" pathLength="1" d="M6 31c3-4 5-7 8-9" />
 					<path class="flip-draw flip-draw-head" pathLength="1" d="M6 31c4 1 8 3 11 6" />
 				</svg>
-				<span class="flip-callout-text font-space-grotesk text-sm text-[#e8e7e3]">click me</span>
+				<span class="flip-callout-text font-space-grotesk text-base text-[#e8e7e3]">click me</span>
 			</div>
 		</div>
 		<!-- Visual count only; the button's hidden hint already tells screen readers what's next. -->
-		<p class="font-space-grotesk text-sm text-[#d4d2cc] tabular-nums" aria-hidden="true" data-flip-count>1 / 2</p>
+		<p class="font-space-grotesk text-base text-[#d4d2cc] tabular-nums" aria-hidden="true" data-flip-count>1 / 2</p>
 	</div>
 
 	<div class="grid w-full justify-items-center" aria-live="polite" data-flip-stage>

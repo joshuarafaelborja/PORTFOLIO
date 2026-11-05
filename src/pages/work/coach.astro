@@ -15,7 +15,7 @@ const meta = [
 
 const gif = "shrink-0 w-[160px] sm:w-[200px]";
 const panel =
-	"flex w-full flex-wrap items-center justify-center gap-6 rounded-[4px] bg-[#1a1b1d] px-4 py-8";
+	"flex w-full flex-wrap items-center justify-center gap-6 rounded-[4px] border border-[#d4d2cc] bg-[#1a1b1d] px-4 py-8";
 const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 ---
 
@@ -44,7 +44,7 @@ const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 		<img
 			src="/images/work/coach/context.png"
 			alt="Early Coach desktop dashboard build in Lovable"
-			class="aspect-[960/479] w-full rounded-[4px] object-cover"
+			class="aspect-[960/479] w-full rounded-[4px] border border-[#d4d2cc] object-cover"
 		/>
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
 			New lifters know they need to train progressively, but most apps either overwhelm them with
@@ -75,7 +75,7 @@ const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 		<img
 			src="/images/work/coach/problem.png"
 			alt="Coach mobile screen showing the workout logging and calculator interface"
-			class="aspect-[960/479] w-full rounded-[4px] object-cover"
+			class="aspect-[960/479] w-full rounded-[4px] border border-[#d4d2cc] object-cover"
 		/>
 	</CaseStudySection>
 
@@ -107,12 +107,12 @@ const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 				flows work one-handed, standing up, mid-session.
 			</p>
 		</div>
-		<div class="flex w-full items-center justify-center rounded-[4px] bg-[#1a1b1d] px-4 py-8">
+		<div class="flex w-full items-center justify-center rounded-[4px] border border-[#d4d2cc] bg-[#1a1b1d] px-4 py-8">
 			{/* TODO: design splits this into separate desktop (630w) + mobile (322w) crops with captions "The original desktop build for coach" / "Early Mobile design" */}
 			<img
 				src="/images/work/coach/desktop-to-mobile.png"
 				alt="Side-by-side comparison of the original desktop build and the early mobile redesign for Coach"
-				class="aspect-[960/508] w-full rounded-[4px] object-contain"
+				class="h-auto w-full rounded-[4px]"
 			/>
 		</div>
 	</CaseStudySection>
@@ -122,22 +122,22 @@ const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
 				<img src="/images/work/coach/firefox_cYtMVMMMOm.gif" alt="Coach warm-up calculator in Manual mode" class={gif} />
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">Generates</strong> exact warm-up sets at 50%, 75%, and 85% of working
+					Generates exact warm-up sets at 50%, 75%, and 85% of working
 					weight automatically, each stage building toward the working set.
 				</p>
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">Manual/AI</strong> toggle keeps both modes on one screen, so lifters
+					<strong class="font-bold">Manual/AI toggle</strong> keeps both modes on one screen, so lifters
 					can switch without losing their inputs mid-session.
 				</p>
 			</div>
 			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
 				<img src="/images/work/coach/firefox_tyS3EknInC.gif" alt="Coach warm-up calculator in AI mode" class={gif} />
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">AI</strong> mode reads what actually happened in your last set, weight
-					and reps completed, and recommends increase, hold, or decrease.
+					<strong class="font-bold">AI mode</strong> reads what actually happened in your last set (weight
+					and reps completed) and recommends increase, hold, or decrease.
 				</p>
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">Coach's</strong> Strategy card surfaces that reasoning inline, so beginners
+					<strong class="font-bold">Coach's Strategy card</strong> surfaces that reasoning inline, so beginners
 					build intuition over time instead of dependence on the app.
 				</p>
 			</div>
@@ -149,22 +149,22 @@ const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
 				<img src="/images/work/coach/firefox_Kk67Uo5ZW4.gif" alt="Coach progression calculator in Manual mode" class={gif} />
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">Most</strong> beginners track their lifts but have no framework for
+					Most beginners track their lifts but have no framework for
 					knowing when to push heavier or when to pull back.
 				</p>
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">Progression</strong> uses the same pill-tab pattern as the warm-up
+					Progression uses the same pill-tab pattern as the warm-up
 					calculator, so switching between tools doesn't mean relearning the app.
 				</p>
 			</div>
 			<div class="flex w-[468px] max-w-full flex-col items-center gap-2">
 				<img src="/images/work/coach/firefox_9nxtYEoi5B.gif" alt="Coach progression calculator in AI mode" class={gif} />
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">A</strong> new lifter who hits 11 reps on an 8-rep target has no instinct
-					for what that means next week, logging data alone doesn't give direction.
+					A new lifter who hits 11 reps on an 8-rep target has no instinct
+					for what that means next week. Logging data alone doesn't give direction.
 				</p>
 				<p class={`${caption} text-center`}>
-					<strong class="font-bold">AI</strong> mode translates weight, target reps, and reps completed
+					<strong class="font-bold">AI mode</strong> translates weight, target reps, and reps completed
 					into a clear next working weight, with the reasoning shown inline.
 				</p>
 			</div>
@@ -177,19 +177,17 @@ const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 			{/* TODO: supporting "Create Account" modal crop (442w) — not available as a clean Figma export */}
 		</div>
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Losing months of logged progress because you switched phones or cleared your browser would
-			kill the habit entirely. Account creation syncs workout history to a database so users never
-			start from zero. A friends layer builds on top of that, adding social accountability as a
-			second reason to stay consistent.
+			With accounts already in place, a friends layer builds on top of them, adding social
+			accountability as a second reason to stay consistent.
 		</p>
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow="What's next" heading="Medals borrowed from competitive games">
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Weight progression is slow, a beginner might train for weeks before their numbers move
+			Weight progression is slow: a beginner might train for weeks before their numbers move
 			meaningfully, which is exactly when most people quit. Medals add a second progression track
 			that rewards consistency over performance, so users feel advancement even when the plates
-			aren't moving. Borrowed from ranked systems in competitive games, where visible milestones
+			aren't moving. The idea comes from ranked systems in competitive games, where visible milestones
 			keep players returning regardless of skill level.
 		</p>
 		<div class={panel}>
@@ -208,7 +206,7 @@ const caption = "max-w-full font-space-grotesk text-base text-[#e8e7e3]";
 
 	<CaseStudySection eyebrow="Outcome" heading="Try it live">
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Coach is live and functional. Try the warm-up and progression calculators yourself, right
+			Try the warm-up and progression calculators yourself, right
 			here.
 		</p>
 		<div class="flex justify-center overflow-x-auto py-2">
