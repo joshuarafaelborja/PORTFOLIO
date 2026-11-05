@@ -54,10 +54,10 @@ export const outcome = {
 	},
 	// StatStrip under the video. Design facts only, no performance numbers.
 	stats: [
-		{ value: "0 → 3", label: "brand, landing page and B2B flow, in 4 weeks" },
+		{ value: "0 → 3", label: "brand, landing page, and B2B flow, in 4 weeks" },
 		{ value: "2 → 1", label: "hero buttons on the landing page" },
 		{ value: "5 steps", label: "numbered steps in the B2B onboarding flow" },
-		{ value: "Liked", label: "Loop’s feedback on the branding and the onboarding flow" },
+		{ value: "Positive", label: "Loop’s feedback on the branding and the onboarding flow" },
 	],
 	body: "Loop is a Brighton e-bike startup. When we started, they had no brand, no website, and no way for an organization to start renting. Between May and June 2025, our three-person design team built all three. I owned the landing page and the B2B onboarding flow, and I gave input on the color scheme and fonts.",
 };
@@ -73,7 +73,7 @@ export const problem = {
 	heading: "No brand, no site, no way to convert organizations",
 	pills: [
 		{ heading: "#1 NO BRAND", body: "Loop had no brand assets or digital presence to build from." },
-		{ heading: "#2 NO B2B FLOW", body: "No clear path from learning about Loop to picking a plan and booking a call" },
+		{ heading: "#2 NO B2B FLOW", body: "No clear path from learning about Loop to picking a plan and booking a call." },
 		{ heading: "#3 LITTLE DIRECTION", body: "Loop gave us a list of competitors and its research, then gave us room to set our own direction." },
 	],
 };
@@ -134,7 +134,7 @@ export const screenshotSteps: Step[] = stepTitles.map((title, i) => ({
 export const brand = {
 	eyebrow: "Design Decision",
 	heading: "The brand system",
-	body: "Our brand lead had the final say on the brand system. I gave input on the color scheme and font selection. Loop’s brand story asks for design that feels inclusive and human, with no jargon and none of the exclusivity of premium products. Its voice is friendly, clear, empowering and inclusive. The rounded Tilt Neon wordmark and the soft Powder palette read that way: approachable, not niche.",
+	body: "Our brand lead had the final say on the brand system. I gave input on the color scheme and font selection. Loop’s brand story asks for design that feels inclusive and human, with no jargon and none of the exclusivity of premium products. Its voice is friendly, clear, empowering, and inclusive. The rounded Tilt Neon wordmark and the soft Powder palette read that way: approachable, not niche.",
 	wordmarks: {
 		src: wordmarkVersions,
 		alt: "Loop wordmark in three versions: primary, monochrome, and reversed for dark backgrounds.",
@@ -173,10 +173,10 @@ export const onboarding = {
 	eyebrow: "Design Decision",
 	heading: "Rebuilding the B2B onboarding flow",
 	// Under the onboarding demo, which opens on the company info screen.
-	caption: "Original company info screen, before the five numbered steps.",
+	caption: "The final onboarding flow, five numbered steps.",
 	// Tried / Noticed / Fix pills, verbatim from Figma 1047:154.
 	pills: [
-		{ heading: "What I tried", body: "No progress indicators, too many options per screen, and no tie to Loop’s brand." },
+		{ heading: "What I found", body: "No progress indicators, too many options per screen, and no tie to Loop’s brand." },
 		{ heading: "What I noticed", body: "Competitors made renting a bike a long process. Loop’s goal was simpler: get a call booked." },
 		{
 			heading: "The fix",
@@ -238,13 +238,13 @@ export const onboardingFlow = {
 		},
 	],
 	final: {
-		heading: "Last step, finalize and book",
+		heading: "Last step: finalize and book",
 		planHeading: "Your plan",
 		plan: [
-			{ label: "Company Size", key: "size", value: "50-100" },
-			{ label: "Budget", key: "budget", value: "$10,000 - 20,000" },
-			{ label: "Subscription:", key: "subscription", value: "2 years" },
-			{ label: "Bike type:", key: "bike", value: "Electric" },
+			{ label: "Company size", key: "size", value: "50-100" },
+			{ label: "Budget", key: "budget", value: "$10,000 - $20,000" },
+			{ label: "Subscription", key: "subscription", value: "2 years" },
+			{ label: "Bike type", key: "bike", value: "Electric" },
 			{ label: "", key: "tier", value: "Tier 1" },
 		],
 		schedule: "Schedule a call",
@@ -286,7 +286,7 @@ export const rebuild = {
 		],
 		summary: {
 			heading: "AI summary",
-			body: "A 50 to 100 person company wants electric bikes on a two-year subscription at Tier 1, with a $10,000 to $20,000 budget. They picked the basic tier, so ask what they need from maintenance and insurance.",
+			body: "A 50- to 100-person company wants electric bikes on a two-year subscription at Tier 1, with a $10,000 to $20,000 budget. They picked the basic tier, so ask what they need from maintenance and insurance.",
 		},
 		suggestion: {
 			heading: "AI suggestion",

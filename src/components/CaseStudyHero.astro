@@ -34,7 +34,7 @@ const { title, heroSrc, heroAlt, heroPlaceholder = "hero", meta } = Astro.props;
 				class="h-auto w-full rounded-[4px] border border-[#d4d2cc]"
 			/>
 		) : heroSrc ? (
-			<div class="aspect-[960/479] w-full overflow-hidden rounded-[4px] bg-[#1a1a1a]">
+			<div class="aspect-[960/479] w-full overflow-hidden rounded-[4px] border border-[#d4d2cc] bg-[#1a1a1a]">
 				<img src={heroSrc} alt={heroAlt} class="h-full w-full object-cover" />
 			</div>
 		) : (

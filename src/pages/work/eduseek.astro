@@ -111,7 +111,7 @@ const heroStats = [
 ];
 
 const panel =
-	"flex w-full flex-wrap items-center justify-center gap-4 rounded-[4px] bg-[#1e1e1e] px-4 py-8";
+	"flex w-full flex-wrap items-center justify-center gap-4 rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] px-4 py-8";
 ---
 
 <CaseStudyLayout
@@ -143,8 +143,8 @@ const panel =
 			</p>
 			<ul class="flex list-disc flex-col gap-1 pl-5 font-space-grotesk text-base text-[#1a1a1a]">
 				<li>
-					<strong class="font-bold">Calendar navigation:</strong> The original only let teachers step
-					through one button or arrow at a time, so reaching a past session took 8+ clicks. I designed
+					<strong class="font-bold">Calendar navigation:</strong> The original only let teachers move
+					one step at a time with a button or arrow, so reaching a past session took 8+ clicks. I designed
 					a Year / Month / Week picker that holds its position and matches the style of the analytics
 					window. Open it, pick a year, a month, then a week, and that week's chats load. That's 4
 					clicks. It also gives schools that have used Eduseek for a long time a way to get back
@@ -167,7 +167,7 @@ const panel =
 			</p>
 		</div>
 		<!-- Same frame as the interactive calendar frame. -->
-		<div class="w-full bg-[#1e1e1e] px-4 py-12 lg:py-16">
+		<div class="w-full rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] px-4 py-12 lg:py-16">
 			<!-- Same heading style as the calendar frame's; mb-6 = its 24px gap. -->
 			<h3 class="mb-6 text-center font-space-grotesk text-base font-bold text-[#ffffff]">Solutions at a glance</h3>
 			<TabSwitcher label="Solutions" items={solutions} tone="dark" />
@@ -175,7 +175,7 @@ const panel =
 	</CaseStudySection>
 
 	<CaseStudySection eyebrow="Context" heading="The platform">
-		<div class="flex items-center justify-center rounded-[4px] bg-[#1e1e1e] p-2">
+		<div class="flex items-center justify-center rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] p-2">
 			<img
 				src="/images/work/eduseek/context.png"
 				alt="Eduseek.AI platform dashboard overview"
@@ -201,7 +201,7 @@ const panel =
 			<ul class="flex list-disc flex-col gap-1 pl-5 font-space-grotesk text-base text-[#1a1a1a]">
 				<li>
 					<strong class="font-bold">Too many clicks:</strong> The original calendar only let teachers
-					step through one button or arrow at a time.
+					move one step at a time with a button or arrow.
 				</li>
 				<li>
 					<strong class="font-bold">Scores with no context:</strong> A mastery score didn't tell
@@ -219,15 +219,15 @@ const panel =
 
 	<CaseStudySection eyebrow="Design Decisions" heading="From 8+ clicks to 4, with navigation that stays put">
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			The original calendar made teachers step through one button or arrow at a time. I rebuilt it
+			The original calendar made teachers move one step at a time with a button or arrow. I rebuilt it
 			as a Year / Month / Week picker. Calendar and fitness apps tend to read top to bottom, so I
 			used the same order. The student you're looking at sits at the top, and all of their chat
 			sessions sit below.
 		</p>
-		<Stat value="4" label="clicks: open the picker, then pick a year, a month and a week" />
+		<Stat value="4" label="clicks: open the picker, then pick a year, a month, and a week" />
 		<FlipToggle states={navigationToggle} />
 		<!-- Working calendar, replacing the static component-states image. Same frame as the stage above. -->
-		<div class="flex w-full flex-col items-center gap-2 bg-[#1e1e1e] px-4 py-12 lg:py-16">
+		<div class="flex w-full flex-col items-center gap-2 rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] px-4 py-12 lg:py-16">
 			<!-- mb-4 + the frame's 8px gap = 24px above the calendar. -->
 			<h3 class="mb-4 text-center font-space-grotesk text-base font-bold text-[#ffffff]">Interactive prototype</h3>
 			<CalendarPicker id="navigation-calendar" />
@@ -256,7 +256,7 @@ const panel =
 		</div>
 		<!-- Pair side by side from md up (both 332px tall, at or below native size),
 		     stacked below that. 24px gap either way. -->
-		<div class="flex w-full flex-col items-center justify-center gap-6 rounded-[4px] bg-[#1e1e1e] px-4 py-8 md:flex-row">
+		<div class="flex w-full flex-col items-center justify-center gap-6 rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] px-4 py-8 md:flex-row">
 			<img
 				src="/images/work/eduseek/Figma_VJ9ajLfiwp.gif"
 				alt="Key Insights card with color-coded progress meters"
@@ -281,7 +281,7 @@ const panel =
 			the components to work at mobile screen sizes and match the new desktop design.
 		</p>
 		<!-- Side by side from sm up, stacked on phones. Images capped at the Figma 479px height. -->
-		<div class="grid w-full grid-cols-1 items-start gap-8 rounded-[4px] bg-[#1e1e1e] px-4 py-8 sm:grid-cols-2">
+		<div class="grid w-full grid-cols-1 items-start gap-8 rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] px-4 py-8 sm:grid-cols-2">
 			<figure class="flex flex-col items-center gap-2">
 				<img
 					src="/images/work/eduseek/mobile-before.png"
@@ -320,12 +320,12 @@ const panel =
 			</li>
 			<li>
 				<strong class="font-bold">Designing to match someone else's work.</strong> Another designer
-				had built an analytics window, so I copied his design style for session replay. Keeping the
+				had built an analytics window, so I matched his design style for session replay. Keeping the
 				components consistent made the product feel like one system and made it easier to build.
 			</li>
 			<li>
-				<strong class="font-bold">Trusting my judgment.</strong> To cut the clicks, I researched on my
-				own how other tools handle dates and planning, and chose patterns teachers would already
+				<strong class="font-bold">Trusting my judgment.</strong> To cut the clicks, I researched how
+				other tools handle dates and planning on my own, and chose patterns teachers would already
 				know. The CEO was building it in JavaScript, so I adapted existing JavaScript calendar
 				widgets to fit Eduseek. We synced daily and I sent him every finished component, so I could
 				stay open to feedback while still making the design calls.
@@ -338,11 +338,10 @@ const panel =
 		</ul>
 	</CaseStudySection>
 
-	<CaseStudySection eyebrow="Try it" heading="INTERACTIVE PROTOTYPE">
+	<CaseStudySection eyebrow="Try it" heading="Interactive prototype">
 		<p class="font-space-grotesk text-base text-[#1a1a1a]">
-			Explore the session replay prototype I built in Magic Patterns. I used it to test the calendar
-			navigation and Key Insights against the existing site, so there was less for engineering to
-			build.
+			Explore the session replay prototype I built in Magic Patterns, where I tested the calendar
+			navigation and Key Insights against the existing site.
 		</p>
 		<PrototypeEmbed
 			src="https://project-session-replay-dashboard-ui-896.magicpatterns.app"

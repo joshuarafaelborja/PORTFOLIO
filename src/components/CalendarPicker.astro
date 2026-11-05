@@ -202,7 +202,7 @@ const chevronPath =
 		background: none;
 		color: #4b5563;
 		font: inherit;
-		font-size: 14px;
+		font-size: 16px;
 		font-weight: 500;
 		line-height: normal;
 		text-align: left;
@@ -215,6 +215,13 @@ const chevronPath =
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+	/* Below 400px the full label doesn\'t fit on one line: wrap it instead of cutting it off.
+	   The open panel keeps its fixed 417px height; the lists below get the difference. */
+	@media (max-width: 399px) {
+		.cal-header-label {
+			white-space: normal;
+		}
 	}
 	.cal-chevron {
 		display: flex;
@@ -270,7 +277,7 @@ const chevronPath =
 		background: transparent;
 		color: #fff;
 		font: inherit;
-		font-size: 14px;
+		font-size: 16px;
 		font-weight: 500;
 		line-height: normal;
 		white-space: nowrap;
@@ -342,7 +349,7 @@ const chevronPath =
 		padding: 12px;
 		border-radius: 10px;
 		color: #4b5563;
-		font-size: 14px;
+		font-size: 16px;
 		font-weight: 500;
 		line-height: normal;
 		cursor: pointer;

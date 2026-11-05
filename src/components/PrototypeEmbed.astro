@@ -25,9 +25,9 @@ const { src, title, nativeWidth = 1280, nativeHeight = 800 } = Astro.props;
 
 <div class="proto-embed flex w-full flex-col gap-3" data-proto-embed data-native-width={nativeWidth}>
 	<!-- Same dark frame as the other interactive frames. -->
-	<div class="proto-frame w-full bg-[#1e1e1e] px-4 py-12 lg:py-16">
+	<div class="proto-frame w-full rounded-[4px] border border-[#d4d2cc] bg-[#1e1e1e] px-4 py-12 lg:py-16">
 		<div class="proto-viewport" style={`aspect-ratio: ${nativeWidth} / ${nativeHeight}`} data-proto-viewport>
-			<div class="proto-placeholder font-space-grotesk text-sm text-[#d4d2cc]" aria-hidden="true">
+			<div class="proto-placeholder font-space-grotesk text-base text-[#d4d2cc]" aria-hidden="true">
 				Loading prototype…
 			</div>
 			<iframe
